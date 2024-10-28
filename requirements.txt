@@ -1,6 +1,6 @@
 dj_rest_auth==6.0.0
 Django==4.2.16
-django_cors_headers==4.5.0
+django_cors_headers==4.4.0
 django_rest_framework_social_oauth2==1.2.0
 djangorestframework==3.15.2
 djangorestframework_simplejwt==5.3.1
