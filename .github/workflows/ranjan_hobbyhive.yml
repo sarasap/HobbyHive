@@ -36,8 +36,8 @@ jobs:
           npm install
         
       
-      - name: Install dependencies
-        run: python manage.py collectstatic
+      - name: Run collectstatic
+        run: python manage.py collectstatic --noinput
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
