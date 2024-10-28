@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import axiosInstance from '../utils/axiosConfig';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -17,7 +18,7 @@ function Login({ setIsAuth }) {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/login/', {
+      const response = await axiosInstance.post('/api/auth/login/', {
         username,
         password,
       });

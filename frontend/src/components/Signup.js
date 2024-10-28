@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import axiosInstance from '../utils/axiosConfig';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -40,7 +41,7 @@ function Signup() {
     const payload = { username, email, password, confirm_password };
   
     try {
-      const registerResponse = await axios.post('http://localhost:8000/api/auth/register/', payload);
+      const registerResponse = await axiosInstance.post('/api/auth/register/', payload);
 
       if (registerResponse.status === 201) {
         setSuccessMessage('Registration successful! Redirecting to login...');
