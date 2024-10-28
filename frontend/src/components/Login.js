@@ -21,19 +21,15 @@ function Login({ setIsAuth }) {
         username,
         password,
       });
-      
-      const token = response.data.token;
-      localStorage.setItem('token', token);
 
-      axios.defaults.headers.common['Authorization'] = `Token ${token}`;
-      
+      const token = response.data.token;
+      setToken(token);
       setIsAuth(true);
       navigate('/home');
     } catch (error) {
       alert('Invalid credentials');
     }
   };
-
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
   };
@@ -45,26 +41,26 @@ function Login({ setIsAuth }) {
         <form onSubmit={handleLogin}>
           <div className="mb-3">
             <label htmlFor="username" className="form-label">Username</label>
-            <input 
-              type="text" 
-              id="username" 
-              className="form-control" 
+            <input
+              type="text"
+              id="username"
+              className="form-control"
               placeholder="Enter your username"
               value={username}
-              onChange={(e) => setUsername(e.target.value)} 
-              required 
+              onChange={(e) => setUsername(e.target.value)}
+              required
             />
           </div>
           <div className="mb-3">
             <label htmlFor="password" className="form-label">Password</label>
-            <input 
-              type="password" 
-              id="password" 
-              className="form-control" 
+            <input
+              type="password"
+              id="password"
+              className="form-control"
               placeholder="Enter your password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)} 
-              required 
+              onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </div>
           <button type="submit" className="btn w-100" style={{ backgroundColor: '#ff7f50', color: 'white' }}>Login</button>
@@ -75,7 +71,7 @@ function Login({ setIsAuth }) {
       </div>
 
 
-      <button 
+      <button
         className={`btn position-fixed bottom-0 end-0 m-4 ${darkMode ? 'btn-light' : 'btn-dark'}`}
         onClick={toggleDarkMode}
         style={{ borderRadius: '50%', width: '50px', height: '50px' }}

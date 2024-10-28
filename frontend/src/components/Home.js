@@ -31,7 +31,7 @@ function Home({ setIsAuth }) {
     } finally {
       removeToken();
       setIsAuth(false);
-      navigate('/login');
+      window.location.replace('/login');
     }
   };
 
