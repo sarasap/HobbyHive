@@ -35,5 +35,3 @@ DATABASES = {
         'PASSWORD': conn_str_params['password'],
     }
 }
-
-##Test code
