@@ -1,12 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useCallback } from 'react';
 import axiosInstance from '../utils/axiosConfig';
 import { removeToken } from '../utils/auth';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Home({ setIsAuth }) {
-  const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
+
+  const handleLogout = useCallback(async () => {
+    try {
+      await axiosInstance.post('/api/auth/logout/');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    } finally {
+      removeToken();
+      setIsAuth(false);
+      window.location.replace('/login');
+    }
+  }, [setIsAuth]);
 
   useEffect(() => {
     const verifyAuth = async () => {
@@ -21,19 +31,7 @@ function Home({ setIsAuth }) {
     };
 
     verifyAuth();
-  }, []);
-
-  const handleLogout = async () => {
-    try {
-      await axiosInstance.post('/api/auth/logout/');
-    } catch (error) {
-      console.error('Logout failed:', error);
-    } finally {
-      removeToken();
-      setIsAuth(false);
-      window.location.replace('/login');
-    }
-  };
+  }, [handleLogout]);
 
   if (!userData) {
     return <div>Loading...</div>;
