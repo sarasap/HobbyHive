@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getToken, removeToken } from './auth';
 
-const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const baseURL = 'https://hobbyhive-dbhtapemgpdeayc7.northcentralus-01.azurewebsites.net' || 'http://localhost:8000';
 
 const axiosInstance = axios.create({
   baseURL,
