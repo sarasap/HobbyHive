@@ -4,7 +4,7 @@ import { getToken, removeToken } from './auth';
 const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 const axiosInstance = axios.create({
-  baseURL,
+  baseURL: 'http://localhost:8000',
 });
 
 // Create a separate instance for authentication endpoints
