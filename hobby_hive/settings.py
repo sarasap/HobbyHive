@@ -72,7 +72,6 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://hobbyhive-dbhtapemgpdeayc7.northcentralus-01.azurewebsites.net",
 ]
 
 

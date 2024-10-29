@@ -39,7 +39,6 @@ def login_view(request):
 @permission_classes([IsAuthenticated])
 def home(request):
     return Response({
-        'message': 'Welcome to HobbyHive!',
         'username': request.user.username
     })
 
