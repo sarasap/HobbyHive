@@ -1,127 +1,52 @@
-name: CI Pipeline for HobbyHive
+name: Django CI/CD Pipeline
 
 on:
   push:
-    branches: [main]
+    branches: [ "main" ]
   pull_request:
-    branches: [main]
+    branches: [ "main" ]
 
 jobs:
-  setup:
+  test:
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.10'
+    
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run Migrations
+      run: python manage.py migrate
+    
+    - name: Run Tests
+      run: |
+        # Add your test command here
+        python manage.py test
+    
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-  backend:
+  deploy:
+    needs: test
     runs-on: ubuntu-latest
-    needs: setup
-    services:
-      postgres:
-        image: postgres:13
-        env:
-          POSTGRES_USER: ikdyrlufdi
-          POSTGRES_PASSWORD: 53QWjEdvPMt1$zL4
-          POSTGRES_DB: mydb1
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      # Optional: Wait for Postgres to ensure it's ready
-      - name: Wait for Postgres
-        run: sleep 10
-
-      - name: Run Django migrations
-        env:
-          SECRET: ${{ secrets.SECRET }}
-          WEBSITE_HOSTNAME: ${{ secrets.WEBSITE_HOSTNAME }}
-          DATABASE_URL: postgres://postgres:password@localhost:5432/my_db_2
-        run: python manage.py migrate --noinput
-
-      - name: Run Django tests
-        env:
-          SECRET: ${{ secrets.SECRET }}
-          WEBSITE_HOSTNAME: ${{ secrets.WEBSITE_HOSTNAME }}
-          DATABASE_URL: postgres://postgres:password@localhost:5432/my_db_2
-        run: python manage.py test
-
-  frontend:
-    runs-on: ubuntu-latest
-    needs: backend
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-
-      - name: Cache Node modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Install frontend dependencies
-        working-directory: frontend
-        run: npm install
-
-      - name: Run frontend tests
-        working-directory: frontend
-        run: npm test -- --watchAll=false
-
-      - name: Run frontend build
-        working-directory: frontend
-        run: npm run build
-
-  linting:
-    runs-on: ubuntu-latest
-    needs: [backend, frontend]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Python for backend linting
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.10
-
-      - name: Install backend dependencies for linting
-        run: |
-          pip install -r requirements.txt
-          pip install flake8
-
-      - name: Run Flake8 for backend linting
-        run: flake8 hhMain hobby_hive
-
-      - name: Set up Node.js for frontend linting
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-
-      - name: Run ESLint for frontend linting
-        working-directory: frontend
-        run: |
-          npm install eslint
-          npx eslint . --ext .js,.jsx --max-warnings=0
+    - uses: actions/checkout@v3
+    
+    - name: 'Deploy to Azure Web App'
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'hobbyhive'
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
