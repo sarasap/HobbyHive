@@ -9,6 +9,5 @@ psycopg2==2.9.7
 python-dotenv==1.0.0
 pillow==10.4.0
 flake8
-urllib
 django-storages
 azure-blob-storage
