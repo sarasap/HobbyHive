@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import axiosInstance from '../utils/axiosConfig';
 import { useNavigate } from 'react-router-dom';
 import {
-  FaHome, FaSearch, FaPlus, FaBell, FaUser, FaFire,
-  FaListAlt, FaLayerGroup, FaCalendarAlt, FaMoon, FaSun, FaSignOutAlt, FaHeart, FaComment
+  FaHome, FaSearch, FaBell, FaUser,
 } from 'react-icons/fa';
 import './Dashboard.css';
 import './CreateEvent.css';
