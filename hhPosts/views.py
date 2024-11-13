@@ -1,42 +1,45 @@
-from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.views import APIView
+from rest_framework import status, generics, permissions
 from rest_framework.response import Response
-from .models import Post
-from .serializers import PostSerializer
+from rest_framework.views import APIView
+from .models import Post, Comment
+from .serializers import PostSerializer, CommentSerializer
 
-# View to create a post
-class CreatePostView(generics.CreateAPIView):
+class PostListCreateView(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class PostCreateView(generics.CreateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-# View to list all posts
-class ListPostsView(generics.ListAPIView):
-    queryset = Post.objects.all().order_by('-created_at')
-    serializer_class = PostSerializer
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
-
-# View to like/unlike a post
 class LikePostView(APIView):
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, pk):
-        try:
-            post = Post.objects.get(pk=pk)
-        except Post.DoesNotExist:
-            return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
-
+    def post(self, request, post_id):
+        post = Post.objects.get(id=post_id)
         if request.user in post.likes.all():
-            post.likes.remove(request.user)
-            return Response({"message": "Post unliked"}, status=status.HTTP_200_OK)
+            post.likes.remove(request.user)  # Unlike if already liked
         else:
-            post.likes.add(request.user)
-            return Response({"message": "Post liked"}, status=status.HTTP_200_OK)
+            post.likes.add(request.user)  # Like if not liked yet
+        return Response({'likes_count': post.likes.count()}, status=status.HTTP_200_OK)
+
+class CommentCreateView(generics.CreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        post_id = self.kwargs['post_id']
+        post = Post.objects.get(id=post_id)
+        serializer.save(user=self.request.user, post=post)

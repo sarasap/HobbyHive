@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';  // Import useNavigate
 import axiosInstance from '../utils/axiosConfig';
 import { removeToken } from '../utils/auth';
 import { FaHome, FaSearch, FaPlusSquare, FaHeart, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
@@ -8,6 +9,7 @@ import './Dashboard.css';
 function Home({ setIsAuth }) {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();  // Initialize navigate
 
   useEffect(() => {
     document.title = 'HobbyHive - Home';
@@ -86,7 +88,11 @@ function Home({ setIsAuth }) {
           <FaSearch className="search-icon" />
           <input type="text" placeholder="Search" />
         </div>
-        <FaPlusSquare size={24} className="nav-icon" />
+        <FaPlusSquare 
+          size={24} 
+          className="nav-icon" 
+          onClick={() => navigate('/create-post')}  // Navigate to CreatePost page
+        />
         <FaHeart size={24} className="nav-icon" />
         <FaUserCircle size={24} className="nav-icon" />
       </div>

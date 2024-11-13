@@ -26,7 +26,7 @@ function Login({ setIsAuth }) {
       setToken(token);
       setIsAuth(true);
       setMessage('Login successful!');
-      setTimeout(() => navigate('/home'), 1000);
+      setTimeout(() => navigate('/dashboard'), 1000);
     } catch (error) {
       setMessage('Invalid credentials');
     }

@@ -1,9 +1,8 @@
-# hhPosts/urls.py
 from django.urls import path
-from .views import CreatePostView, ListPostsView, LikePostView
+from .views import PostListCreateView, LikePostView, CommentCreateView
 
 urlpatterns = [
-    path('create/', CreatePostView.as_view(), name='create_post'),
-    path('list/', ListPostsView.as_view(), name='list_posts'),
-    path('<int:pk>/like/', LikePostView.as_view(), name='like_post'),
+    path('posts/', PostListCreateView.as_view(), name='create-post'),
+    path('posts/<int:post_id>/like/', LikePostView.as_view(), name='like-post'),
+    path('posts/<int:post_id>/comment/', CommentCreateView.as_view(), name='create-comment'),
 ]
