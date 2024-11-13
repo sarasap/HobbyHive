@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from .models import UserProfile
 
 class UserSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True)
@@ -23,3 +24,11 @@ class UserSerializer(serializers.ModelSerializer):
         if data['password'] != data.get('confirm_password'):
             raise serializers.ValidationError({"password": "Passwords do not match"})
         return data
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    profile_picture = serializers.ImageField(required=False)
+
+    class Meta:
+        model = UserProfile
+        fields = ['username', 'bio', 'profile_picture', 'location']

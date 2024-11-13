@@ -4,7 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate, logout
 from rest_framework.authtoken.models import Token
 from django.views.decorators.csrf import csrf_exempt
-from .serializers import UserSerializer
+from .serializers import UserSerializer, UserProfileSerializer
+from .models import User, UserProfile
 
 @api_view(['POST'])
 @csrf_exempt
@@ -52,3 +53,22 @@ def logout_view(request):
     
     logout(request)
     return Response({'message': 'User logged out successfully!'})
+
+
+@api_view(['GET', 'PUT'])
+@permission_classes([IsAuthenticated])
+def profile_view(request):
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+
+    if request.method == 'GET':
+        serializer = UserProfileSerializer(profile)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        serializer = UserProfileSerializer(
+            profile, data=request.data, partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
