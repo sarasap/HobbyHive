@@ -103,11 +103,12 @@ function Dashboard({ setIsAuth }) {
       console.error('Failed to add comment:', error);
     }
   };
-
+// eslint-disable-next-line no-unused-vars
   const handleComment = (postId) => {
     navigate(`/posts/${postId}/comment`);
   };
 
+// eslint-disable-next-line no-unused-vars
   const addNewPost = (post) => {
     setPosts([post, ...posts]); // Prepend the new post to the posts array
   };

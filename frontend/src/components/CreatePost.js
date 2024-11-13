@@ -1,10 +1,10 @@
 // src/components/CreatePost.js
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, {useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  FaHome, FaSearch, FaPlus, FaBell, FaUser, FaFire,
-  FaListAlt, FaLayerGroup, FaCalendarAlt, FaMoon, FaSun, FaSignOutAlt, FaHeart, FaComment
+  FaHome, FaSearch, FaBell, FaUser, FaFire,
+  FaListAlt, FaLayerGroup, FaCalendarAlt, FaMoon, FaSun, FaSignOutAlt,
 } from 'react-icons/fa';
 import { removeToken } from '../utils/auth';
 import axiosInstance from '../utils/axiosConfig';
