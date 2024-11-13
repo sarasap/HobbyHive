@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Post, Comment
+from .models import Post, Comment, Event
+from django.utils import timezone
 
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
@@ -33,4 +34,20 @@ class PostSerializer(serializers.ModelSerializer):
         if value.content_type not in ALLOWED_IMAGE_TYPES:
             raise serializers.ValidationError("Unsupported file type. Please upload an image in JPG, PNG, GIF, BMP, or WEBP format.")
         
+        return value
+
+class EventSerializer(serializers.ModelSerializer):
+    creator = serializers.StringRelatedField(read_only=True)
+    
+    class Meta:
+        model = Event
+        fields = ['id', 'title', 'description', 'date', 'location', 'creator', 'created_at']
+        read_only_fields = ['id', 'creator', 'created_at']
+        
+    def validate_date(self, value):
+        """
+        Validate that the event date is not in the past
+        """
+        if value < timezone.now():
+            raise serializers.ValidationError("Event date cannot be in the past")
         return value

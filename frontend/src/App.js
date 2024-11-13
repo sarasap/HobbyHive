@@ -14,6 +14,7 @@ import Events from './components/Events';
 import Hobbies from './components/Hobbies';
 import Trending from './components/Trending';
 import Groups from './components/Groups';
+import CreateEvent from './components/CreateEvent';
 
 function App() {
   const [isAuth, setIsAuth] = useState(isAuthenticated());
@@ -44,13 +45,20 @@ function App() {
             </PrivateRoute>
           }
         />
-        <Route path="/events" element={ <PrivateRoute isAuth={isAuth}><Events /></PrivateRoute>} />
+        <Route path="/events" 
+          element={ 
+          <PrivateRoute isAuth={isAuth}>
+            <Events />
+          </PrivateRoute>
+          } 
+        />
         <Route path="/hobbies" element={<PrivateRoute isAuth={isAuth}><Hobbies /></PrivateRoute>} />
         <Route path="/trending" element={<PrivateRoute isAuth={isAuth}><Trending /></PrivateRoute>} />
         <Route path="/groups" element={<PrivateRoute isAuth={isAuth}><Groups /></PrivateRoute>} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="/create-event" element={<CreateEvent />} />
       </Routes>
     </Router>
   );

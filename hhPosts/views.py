@@ -1,8 +1,8 @@
 from rest_framework import status, generics, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Post, Comment
-from .serializers import PostSerializer, CommentSerializer
+from .models import Post, Comment, Event
+from .serializers import PostSerializer, CommentSerializer, EventSerializer
 
 class PostListCreateView(generics.ListCreateAPIView):
     queryset = Post.objects.all()
@@ -43,3 +43,8 @@ class CommentCreateView(generics.CreateAPIView):
         post_id = self.kwargs['post_id']
         post = Post.objects.get(id=post_id)
         serializer.save(user=self.request.user, post=post)
+
+class EventCreateView(generics.CreateAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    permission_classes = [permissions.IsAuthenticated]
