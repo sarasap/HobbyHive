@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../utils/axiosConfig';
 import './ProfilePage.css';
-import { FaCamera, FaEdit, FaSave, FaTwitter, FaLinkedin, FaInstagram, FaPlus } from 'react-icons/fa';
+import { FaCamera, FaEdit, FaSave, FaTwitter, FaLinkedin, FaInstagram } from 'react-icons/fa';
 
 function ProfilePage() {
   const [profile, setProfile] = useState({});
@@ -11,6 +11,7 @@ function ProfilePage() {
   const [message, setMessage] = useState('');
   const [profilePicture, setProfilePicture] = useState(null);
   const [backgroundImage, setBackgroundImage] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -53,7 +54,7 @@ function ProfilePage() {
       });
     }
   };
-
+// eslint-disable-next-line no-unused-vars
   const handleSave = async () => {
     const formData = new FormData();
     formData.append('bio', profile.bio || '');
