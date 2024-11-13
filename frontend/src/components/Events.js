@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  FaHome, FaSearch, FaPlus, FaBell, FaUser, FaFire,
-  FaListAlt, FaLayerGroup, FaCalendarAlt, FaMoon, FaSun, FaSignOutAlt, FaHeart, FaComment
+  FaHome, FaSearch, FaPlus, FaBell, FaUser,FaMoon, FaSun, FaSignOutAlt
 } from 'react-icons/fa';
 import axiosInstance from '../utils/axiosConfig';
 import { removeToken } from '../utils/auth';
