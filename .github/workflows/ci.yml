@@ -1,0 +1,19 @@
+linting:
+  runs-on: ubuntu-latest
+  needs: [backend, frontend]
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python for backend linting
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.8
+
+    - name: Install backend dependencies for linting
+      run: |
+        pip install -r requirements.txt
+        pip install flake8
+
+    - name: Run Flake8 for backend linting
+      run: flake8 hhMain hobby_hive
