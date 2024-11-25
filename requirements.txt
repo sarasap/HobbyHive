@@ -11,3 +11,5 @@ pillow==10.4.0
 flake8
 urllib3
 django-storages
+django-storages[azure]
+azure-storage-blob
