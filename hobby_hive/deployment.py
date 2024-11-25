@@ -14,17 +14,6 @@ AZURE_ACCOUNT_NAME = 'hobbyhivemedia'
 AZURE_ACCOUNT_KEY = os.environ['AZURE_STORAGE_ACCOUNT_KEY']
 AZURE_CONTAINER = 'media' 
 
-def generate_sas_url(blob_name):
-    sas_token = generate_blob_sas(
-        account_name=AZURE_ACCOUNT_NAME,
-        account_key=AZURE_ACCOUNT_KEY,
-        container_name=AZURE_CONTAINER,
-        blob_name=blob_name,
-        permission=BlobSasPermissions(read=True),
-        expiry=datetime.utcnow() + timedelta(hours=1)  # Set expiry
-    )
-    return f"https://{AZURE_ACCOUNT_NAME}.blob.core.windows.net/{AZURE_CONTAINER}/{blob_name}?{sas_token}"
-
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',

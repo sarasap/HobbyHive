@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Post, Comment, Event
 from django.utils import timezone
+from django.conf import settings
 
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
@@ -23,9 +24,16 @@ class PostSerializer(serializers.ModelSerializer):
         return obj.likes.count()
 
     def get_media_url(self, obj):
-        request = self.context.get('request')
-        if obj.media and request:
-            return request.build_absolute_uri(obj.media.url)
+        if obj.media:
+            # Check if in production environment (Azure)
+            if not settings.DEBUG:
+                # Production: Azure Blob Storage URL
+                return f"https://hobbyhivemedia.blob.core.windows.net/media/{obj.media.name}"
+            else:
+                # Development: Local media URL
+                request = self.context.get('request')
+                if request and obj.media:
+                    return request.build_absolute_uri(obj.media.url)
         return None
     
     def validate_media(self, value):
