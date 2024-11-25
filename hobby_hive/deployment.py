@@ -2,6 +2,8 @@ import os
 from .settings import *
 from .settings import BASE_DIR
 from storages.backends.azure_storage import AzureStorage
+from azure.storage.blob import BlobServiceClient, generate_blob_sas, BlobSasPermissions
+from datetime import datetime, timedelta
 
 SECRET_KEY = os.environ['SECRET']
 ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME']]
@@ -11,6 +13,17 @@ DEBUG = False
 AZURE_ACCOUNT_NAME = 'hobbyhivemedia'
 AZURE_ACCOUNT_KEY = os.environ['AZURE_STORAGE_ACCOUNT_KEY']
 AZURE_CONTAINER = 'media' 
+
+def generate_sas_url(blob_name):
+    sas_token = generate_blob_sas(
+        account_name=AZURE_ACCOUNT_NAME,
+        account_key=AZURE_ACCOUNT_KEY,
+        container_name=AZURE_CONTAINER,
+        blob_name=blob_name,
+        permission=BlobSasPermissions(read=True),
+        expiry=datetime.utcnow() + timedelta(hours=1)  # Set expiry
+    )
+    return f"https://{AZURE_ACCOUNT_NAME}.blob.core.windows.net/{AZURE_CONTAINER}/{blob_name}?{sas_token}"
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
