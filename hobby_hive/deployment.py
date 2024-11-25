@@ -8,9 +8,9 @@ ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME']]
 CSRF_TRUSTED_ORIGINS = ['https://' + os.environ['WEBSITE_HOSTNAME']]
 DEBUG = False
 
-AZURE_ACCOUNT_NAME = os.environ['AZURE_STORAGE_ACCOUNT_NAME']
+AZURE_ACCOUNT_NAME = 'hobbyhivemedia'
 AZURE_ACCOUNT_KEY = os.environ['AZURE_STORAGE_ACCOUNT_KEY']
-AZURE_CONTAINER = 'hobbyhivemedia' 
+AZURE_CONTAINER = 'media' 
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
