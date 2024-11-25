@@ -1,13 +1,16 @@
 import os 
 from .settings import *
 from .settings import BASE_DIR
-
+from storages.backends.azure_storage import AzureStorage
 
 SECRET_KEY = os.environ['SECRET']
 ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME']]
 CSRF_TRUSTED_ORIGINS = ['https://' + os.environ['WEBSITE_HOSTNAME']]
 DEBUG = False
 
+AZURE_ACCOUNT_NAME = os.environ['AZURE_STORAGE_ACCOUNT_NAME']
+AZURE_ACCOUNT_KEY = os.environ['AZURE_STORAGE_ACCOUNT_KEY']
+AZURE_CONTAINER = 'hobbyhivemedia' 
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -32,7 +35,7 @@ CORS_ALLOWED_ORIGINS = [
 
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "storages.backends.azure_storage.AzureStorage",
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
