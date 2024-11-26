@@ -51,6 +51,7 @@ jobs:
           DATABASE_URL: "postgres://ranjan:Bigenergy613#@hobbyhivedev.postgres.database.azure.com:5432/postgres"
           DJANGO_SETTINGS_MODULE: "hobby_hive.testing"        
         run: |
-          python manage.py makemigrations
+          python manage.py makemigrations hhMain
+          python manage.py makemigrations hhPosts
           python manage.py migrate
           python -m pytest --maxfail=5 --disable-warnings --tb=short
