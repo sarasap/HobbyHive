@@ -23,11 +23,8 @@ DATABASES = {
 SECRET_KEY = 'testing-secret-key'
 
 # Restrict allowed hosts for testing
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'hobbyhive-dbhtapemgpdeayc7.northcentralus-01.azurewebsites.net']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-CORS_ALLOWED_ORIGINS = [
-    "https://hobbyhive-dbhtapemgpdeayc7.northcentralus-01.azurewebsites.net",
-]
 
 
 # Disable authentication classes to simplify testing (optional)
