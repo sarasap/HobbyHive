@@ -59,7 +59,7 @@ jobs:
         except Exception as e:
             print(f'Connection failed: {e}')
           exit(1)
-"
+        "
     
     - name: Run Migrations
       env:
