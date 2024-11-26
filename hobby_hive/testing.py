@@ -7,10 +7,10 @@ DEBUG = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',  # PostgreSQL for GitHub Actions
-        'NAME': 'test_db',                         # Database name in GitHub Actions
-        'USER': 'postgres',                        # Default username
-        'PASSWORD': 'postgres',                    # Default password
-        'HOST': 'localhost',                       # Database host in GitHub Actions
+        'NAME': 'postgres',                         # Database name in GitHub Actions
+        'USER': 'ranjan',                        # Default username
+        'PASSWORD': 'Bigenergy613',                    # Default password
+        'HOST': 'hobbyhivedev.postgres.database.azure.com',                       # Database host in GitHub Actions
         'PORT': '5432',                            # Default PostgreSQL port
     }
 }
