@@ -5,6 +5,20 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APIClient
 from rest_framework import status
 from .models import Post, Comment, Event
+from io import BytesIO
+from PIL import Image
+
+def create_test_image():
+    # Create an image in memory
+    image = Image.new('RGB', (100, 100), color='red')
+    buffer = BytesIO()
+    image.save(buffer, format='JPEG')
+    buffer.seek(0)
+    return SimpleUploadedFile(
+        name='test_image.jpg',
+        content=buffer.read(),
+        content_type='image/jpeg'
+    )
 
 logger = logging.getLogger(__name__)
 
@@ -97,16 +111,10 @@ class PostViewsTestCase(TestCase):
     def test_create_post(self):
         """Test creating a post via API"""
         # Create a test image
-        test_image = SimpleUploadedFile(
-            name='test_image.jpg', 
-            content=b'', 
-            content_type='image/jpeg'
-        )
-
-        # Prepare post data
+        test_image = create_test_image()
         post_data = {
-            'caption': 'Test post via API',
-            'media': test_image
+        'caption': 'Test post via API',
+        'media': test_image
         }
 
         # Send POST request
