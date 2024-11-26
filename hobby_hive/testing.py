@@ -27,6 +27,7 @@ logger.debug(f"DB_NAME: {db_name}")
 logger.debug(f"DB_USER: {db_user}")
 logger.debug(f"DB_HOST: {db_host}")
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
