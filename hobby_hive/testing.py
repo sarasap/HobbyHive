@@ -1,4 +1,4 @@
-from settings import *  # Import everything from settings.py
+from .settings import *  # Import everything from settings.py
 import os
 from dotenv import load_dotenv
 import logging
