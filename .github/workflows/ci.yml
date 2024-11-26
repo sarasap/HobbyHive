@@ -49,6 +49,6 @@ jobs:
       - name: Run tests
         env:
           DATABASE_URL: "postgres://ranjan:Bigenergy613#@hobbyhivedev.postgres.database.azure.com:5432/postgres"
-          DJANGO_SETTINGS_MODULE: "hobby_hive.deployment"        
+          DJANGO_SETTINGS_MODULE: "hobby_hive.testing"        
         run: |
           python -m pytest --maxfail=5 --disable-warnings --tb=short
