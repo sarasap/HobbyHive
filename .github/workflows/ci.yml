@@ -23,6 +23,13 @@ jobs:
       # Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
+      
+      - name: Set up environment variables
+        run: |
+          echo "DB_NAME=${{ secrets.POSTGRES_DB }}" >> $GITHUB_ENV
+          echo "DB_USER=${{ secrets.POSTGRES_USER  }}" >> $GITHUB_ENV
+          echo "DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD  }}" >> $GITHUB_ENV
+          echo "DB_HOST=${{ secrets.POSTGRES_HOST }}" >> $GITHUB_ENV
 
       # Set up Python
       - name: Set up Python

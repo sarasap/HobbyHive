@@ -1,6 +1,5 @@
 from .settings import *  # Import everything from settings.py
 import os
-from dotenv import load_dotenv
 import logging
 # Enable debugging during tests to see detailed error outputs
 DEBUG = True
@@ -14,11 +13,6 @@ formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 console_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
 
-# Load .env.production file
-env_path = os.path.join(BASE_DIR, '.env.production')
-logger.info(f"Attempting to load environment variables from: {env_path}")
-load_dotenv(dotenv_path=env_path)
-
 db_name = os.getenv('DB_NAME')
 db_user = os.getenv('DB_USER')
 db_host = os.getenv('DB_HOST')
@@ -28,16 +22,16 @@ logger.debug(f"DB_USER: {db_user}")
 logger.debug(f"DB_HOST: {db_host}")
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv('DB_NAME'),
-#         'HOST': os.getenv('DB_HOST'),
-#         'USER': os.getenv('DB_USER'),
-#         'PASSWORD': os.getenv('DB_PASSWORD'),
-#         'PORT' : '5432',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),
+        'HOST': os.getenv('DB_HOST'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'PORT' : '5432',
+    }
+}
 
 # Use a different secret key for testing
 SECRET_KEY = 'testing-secret-key'
