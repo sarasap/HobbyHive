@@ -5,7 +5,9 @@ from django.conf import settings
 import os
 from azure.storage.blob import BlobServiceClient, generate_blob_sas, BlobSasPermissions
 from datetime import datetime, timedelta
+import logging
 
+logger = logging.getLogger(__name__)
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
 
@@ -47,11 +49,13 @@ class PostSerializer(serializers.ModelSerializer):
                     )
                     
                     # Construct full URL with SAS token
+
+                    logger.info(f"Generated URL: {blob_url}?{sas_token}")
                     blob_url = f"https://{account_name}.blob.core.windows.net/{container_name}/{obj.media.name}"
                     return f"{blob_url}?{sas_token}"
                 
                 except Exception as e:
-                    print(f"Error generating SAS token: {e}")
+                    logger.error(f"Error generating SAS token: {e}")
                     return None
             else:
                 # Development: Local media URL
