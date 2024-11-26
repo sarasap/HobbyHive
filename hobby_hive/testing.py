@@ -43,9 +43,11 @@ CORS_ALLOWED_ORIGINS = [
     "https://hobbyhive-dbhtapemgpdeayc7.northcentralus-01.azurewebsites.net",
 ]
 
-
-# Disable authentication classes to simplify testing (optional)
-REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] = []
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
 
 # Adjust media settings for testing (use temporary storage)
 MEDIA_ROOT = BASE_DIR / 'test_media'
