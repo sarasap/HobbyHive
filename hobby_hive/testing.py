@@ -2,6 +2,10 @@ from .settings import *  # Import everything from settings.py
 import os
 from dotenv import load_dotenv
 # Enable debugging during tests to see detailed error outputs
+
+env_path = os.path.join(BASE_DIR, '.env.production')
+load_dotenv(dotenv_path=env_path)
+
 DEBUG = True
 
 # Test database configuration
