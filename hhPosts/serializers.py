@@ -1,13 +1,7 @@
 from rest_framework import serializers
 from .models import Post, Comment, Event
 from django.utils import timezone
-from django.conf import settings
-import os
-from azure.storage.blob import BlobServiceClient, generate_blob_sas, BlobSasPermissions
-from datetime import datetime, timedelta
-import logging
 
-logger = logging.getLogger(__name__)
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
 
@@ -29,39 +23,9 @@ class PostSerializer(serializers.ModelSerializer):
         return obj.likes.count()
 
     def get_media_url(self, obj):
-        if obj.media:
-            # Check if in production environment (Azure)
-            if not settings.DEBUG:
-                try:
-                    # Azure Blob Storage SAS Token Generation
-                    account_name = 'hobbyhivemedia'
-                    account_key = os.environ['AZURE_STORAGE_ACCOUNT_KEY']
-                    container_name = 'media'
-                    
-                    # Generate SAS token
-                    sas_token = generate_blob_sas(
-                        account_name=account_name,
-                        account_key=account_key,
-                        container_name=container_name,
-                        blob_name=obj.media.name,
-                        permission=BlobSasPermissions(read=True),
-                        expiry=datetime.utcnow() + timedelta(hours=1)  # Token valid for 1 hour
-                    )
-                    
-                    # Construct full URL with SAS token
-
-                    logger.info(f"Generated URL: {blob_url}?{sas_token}")
-                    blob_url = f"https://{account_name}.blob.core.windows.net/{container_name}/{obj.media.name}"
-                    return f"{blob_url}?{sas_token}"
-                
-                except Exception as e:
-                    logger.error(f"Error generating SAS token: {e}")
-                    return None
-            else:
-                # Development: Local media URL
-                request = self.context.get('request')
-                if request and obj.media:
-                    return request.build_absolute_uri(obj.media.url)
+        request = self.context.get('request')
+        if obj.media and request:
+            return request.build_absolute_uri(obj.media.url)
         return None
     
     def validate_media(self, value):
