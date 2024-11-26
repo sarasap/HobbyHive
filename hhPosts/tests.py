@@ -1,9 +1,12 @@
+import logging
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APIClient
 from rest_framework import status
 from .models import Post, Comment, Event
+
+logger = logging.getLogger(__name__)
 
 class PostModelTestCase(TestCase):
     def setUp(self):
@@ -111,6 +114,9 @@ class PostViewsTestCase(TestCase):
             data=post_data, 
             format='multipart'
         )
+
+        logger.info("Response Status Code: %s", response.status_code)
+        logger.info("Response Data: %s", response.data)
 
         # Assertions
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
