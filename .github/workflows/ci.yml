@@ -46,7 +46,7 @@ jobs:
     
     - name: Verbose Troubleshooting
       env:
-        DJANGO_SETTINGS_MODULE: hobby_hive.settings  # REPLACE with your actual settings module
+        DJANGO_SETTINGS_MODULE: hobby_hive.deployment  # REPLACE with your actual settings module
       run: |
         echo "--- Verbose Django Check ---"
         python -m django --version
