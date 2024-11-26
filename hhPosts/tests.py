@@ -152,6 +152,7 @@ class PostViewsTestCase(TestCase):
         )
 
         # Assertions
+        print(response.status_code, response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Comment.objects.count(), 1)
         self.assertEqual(Comment.objects.first().text, 'Test comment via API')
