@@ -1,19 +1,21 @@
 from .settings import *  # Import everything from settings.py
-
+import os
 # Enable debugging during tests to see detailed error outputs
 DEBUG = True
 
 # Test database configuration
+conn_str = os.environ['AZURE_POSTGRESQL_CONNECTIONSTRING_1']
+conn_str_params = {pair.split('=')[0]: pair.split('=')[1] for pair in conn_str.split(' ')}
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',  # PostgreSQL for GitHub Actions
-        'NAME': 'postgres',                         # Database name in GitHub Actions
-        'USER': 'ranjan',                        # Default username
-        'PASSWORD': 'Bigenergy613#',                    # Default password
-        'HOST': 'hobbyhivedev.postgres.database.azure.com',                       # Database host in GitHub Actions
-        'PORT': '5432',                            # Default PostgreSQL port
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': conn_str_params['dbname'],
+        'HOST': conn_str_params['host'],
+        'USER': conn_str_params['user'],
+        'PASSWORD': conn_str_params['password'],
     }
 }
+
 
 # Use a different secret key for testing
 SECRET_KEY = 'testing-secret-key'
