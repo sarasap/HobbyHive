@@ -1,16 +1,20 @@
 name: Django CI/CD Pipeline
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - ranjan
+  workflow_dispatch:
 
 jobs:
   test:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v5
       with:
         python-version: '3.8'
     
@@ -23,9 +27,7 @@ jobs:
       run: python manage.py migrate
     
     - name: Run Tests
-      run: |
-        # Add your test command here
-        python manage.py test
+      run: python manage.py test
     
     - name: Lint with flake8
       run: |
@@ -40,6 +42,13 @@ jobs:
     
     steps:
     - uses: actions/checkout@v3
+
+    - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_695AFC8270464509A7F77509C6725523 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_883A689D3B304DCC8895A5B25AFC53BF }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_7ADE5259D766404AAFE18DEE07498023 }}
     
     - name: 'Deploy to Azure Web App'
       uses: azure/webapps-deploy@v2
