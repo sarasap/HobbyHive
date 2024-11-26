@@ -14,3 +14,5 @@ django-storages
 django-storages[azure]
 azure-storage-blob
 python-dotenv
+black
+pytest
