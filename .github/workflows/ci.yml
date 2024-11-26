@@ -14,7 +14,7 @@ jobs:
         image: postgres:14
         env:
           POSTGRES_USER: ranjan
-          POSTGRES_PASSWORD: 1>?0:E`1ScU/
+          POSTGRES_PASSWORD: Bigenergy613#
           POSTGRES_DB: postgres
         ports:
           - "5432:5432"
@@ -58,6 +58,6 @@ jobs:
       # Run pytest for testing
       - name: Run tests
         env:
-          DATABASE_URL: "postgres://ranjan:1>?0:E`1ScU/@hobbyhivedev.postgres.database.azure.com:5432/postgres"
+          DATABASE_URL: "postgres://ranjan:Bigenergy613#@hobbyhivedev.postgres.database.azure.com:5432/postgres"
         run: |
           python -m pytest --maxfail=5 --disable-warnings --tb=short
