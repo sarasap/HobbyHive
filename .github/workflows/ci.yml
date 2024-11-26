@@ -54,4 +54,4 @@ jobs:
           python manage.py makemigrations hhMain
           python manage.py makemigrations hhPosts
           python manage.py migrate
-          python -m pytest --maxfail=5 --disable-warnings --tb=short
+          python manage.py test
