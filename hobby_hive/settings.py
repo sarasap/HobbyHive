@@ -104,7 +104,7 @@ WSGI_APPLICATION = 'hobby_hive.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'my_db_3',
+        'NAME': 'my_db_2',
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost',
