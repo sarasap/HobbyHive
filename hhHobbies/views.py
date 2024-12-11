@@ -6,9 +6,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from hhPosts.models import Post
 from hhPosts.serializers import PostSerializer
-import openai
 from django.conf import settings
-from decouple import config
 from fuzzywuzzy import fuzz
 import nltk
 from nltk.stem import WordNetLemmatizer, PorterStemmer
