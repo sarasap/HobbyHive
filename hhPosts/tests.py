@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APIClient
 from rest_framework import status
-from .models import Post, Comment, Event
+from .models import Post, Comment
 from io import BytesIO
 from PIL import Image
 
