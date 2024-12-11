@@ -1,19 +1,23 @@
 from rest_framework import status, generics, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Post, Comment, Event
-from .serializers import PostSerializer, CommentSerializer, EventSerializer
+from .models import Post, Comment
+from .serializers import PostSerializer, CommentSerializer
+from hhMain.models import UserProfile
 
 class PostListCreateView(generics.ListCreateAPIView):
-    queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_queryset(self):
+        # Get the user's profile and hobbies
+        profile = UserProfile.objects.get(user=self.request.user)
+        joined_hobbies = profile.hobbies.all()
+        return Post.objects.filter(hobbies__in=joined_hobbies).distinct()
+
     def get_serializer_context(self):
         return {'request': self.request}
-    
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+
 
 class PostCreateView(generics.CreateAPIView):
     queryset = Post.objects.all()
@@ -44,7 +48,15 @@ class CommentCreateView(generics.CreateAPIView):
         post = Post.objects.get(id=post_id)
         serializer.save(user=self.request.user, post=post)
 
-class EventCreateView(generics.CreateAPIView):
-    queryset = Event.objects.all()
-    serializer_class = EventSerializer
+
+class UserHobbiesPostsView(generics.ListAPIView):
+    serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Get the user's profile and hobbies
+        profile = UserProfile.objects.get(user=self.request.user)
+        joined_hobbies = profile.hobbies.all()
+
+        # Return posts related to the user's hobbies
+        return Post.objects.filter(hobbies__in=joined_hobbies).distinct()

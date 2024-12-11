@@ -48,7 +48,7 @@ const LandingPage = () => {
             <section className="hero-section">
                 <div className="hero-overlay">
                     <div className="hero-text">
-                        <h1>Discover, Share, and Connect with Your Hobbies</h1>
+                        <h1>Discover, Share, and Connect with Create Hobbies</h1>
                         <p>Join a community of passionate hobbyists and explore the latest viral content from your favorite hobbies!</p>
                         <span onClick={handleSignupClick} className="cta-button">Get Started</span>
                     </div>

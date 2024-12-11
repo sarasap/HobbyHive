@@ -1,6 +1,6 @@
 // src/components/CreatePost.js
 
-import React, {useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   FaHome, FaSearch, FaBell, FaUser, FaFire,
@@ -12,17 +12,31 @@ import './CreatePost.css';
 import Cropper from 'react-easy-crop';
 import { getCroppedImg } from '../utils/cropImage';
 
-function CreatePost({setIsAuth}) {
+function CreatePost({ setIsAuth }) {
   const [darkMode, setDarkMode] = useState(false);
   const [caption, setCaption] = useState('');
   const [media, setMedia] = useState(null);
   const [message, setMessage] = useState('');
+  const [hobbies, setHobbies] = useState([]); // List of hobbies
+  const [selectedHobbies, setSelectedHobbies] = useState([]); // Selected hobbies
   const navigate = useNavigate();
   const [imageSrc, setImageSrc] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
+
+  useEffect(() => {
+    const fetchHobbies = async () => {
+      try {
+        const response = await axiosInstance.get('/api/hobbies/');
+        setHobbies(response.data);
+      } catch (error) {
+        console.error('Error fetching hobbies:', error);
+      }
+    };
+    fetchHobbies();
+  }, []);
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
@@ -49,7 +63,7 @@ function CreatePost({setIsAuth}) {
     if (file) {
       const fileType = file.type;
       const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/webp'];
-      
+
       if (!validTypes.includes(fileType)) {
         alert('Unsupported file type. Please upload an image in JPG, PNG, GIF, BMP, or WEBP format.');
         return;
@@ -80,12 +94,12 @@ function CreatePost({setIsAuth}) {
         imageSrc,
         croppedAreaPixels
       );
-      
+
       // Convert cropped image URL to a file
       const response = await fetch(croppedImage);
       const blob = await response.blob();
       const file = new File([blob], 'cropped-image.jpg', { type: 'image/jpeg' });
-      
+
       setCroppedImage(croppedImage);
       setMedia(file); // Set the cropped image file as media to upload
       setImageSrc(null); // Close the cropping view
@@ -102,6 +116,12 @@ function CreatePost({setIsAuth}) {
     setCaption(e.target.value);
   };
 
+  // eslint-disable-next-line no-unused-vars
+  const handleHobbyChange = (e) => {
+    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+    setSelectedHobbies(selectedOptions);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -113,12 +133,13 @@ function CreatePost({setIsAuth}) {
     const formData = new FormData();
     formData.append('caption', caption);
     formData.append('media', media);
+    formData.append('hobby_ids', selectedHobbies);
 
     try {
       const response = await axiosInstance.post('/api/posts/', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-  
+
       if (response.status === 201) {
         setMessage('Post created successfully!');
         setCaption('');
@@ -150,7 +171,7 @@ function CreatePost({setIsAuth}) {
           </div>
         </div>
       </div>
-  
+
       {/* Content Wrapper */}
       <div className="content-wrapper">
         {/* Sidebar */}
@@ -179,11 +200,11 @@ function CreatePost({setIsAuth}) {
             </li>
           </ul>
         </div>
-  
+
         {/* Create Post Section */}
         <div className="create-post-container">
           <h2>Create New Post</h2>
-          
+
           {/* Image Cropping Modal */}
           {imageSrc && (
             <div className="cropper-modal">
@@ -198,7 +219,7 @@ function CreatePost({setIsAuth}) {
                   onZoomChange={setZoom}
                 />
               </div>
-              
+
               <div className="crop-controls">
                 <input
                   type="range"
@@ -209,8 +230,8 @@ function CreatePost({setIsAuth}) {
                   onChange={(e) => setZoom(Number(e.target.value))}
                 />
                 <div className="crop-buttons">
-                  <button onClick={() => setImageSrc(null)}>Cancel</button>
-                  <button onClick={showCroppedImage}>Crop</button>
+                  <button class="button-24" onClick={() => setImageSrc(null)}>Cancel</button>
+                  <button class="button-24" onClick={showCroppedImage}>Save</button>
                 </div>
               </div>
             </div>
@@ -230,13 +251,13 @@ function CreatePost({setIsAuth}) {
           <form onSubmit={handleSubmit} className="create-post-form">
             <label>
               <strong>Upload Image:</strong>
-              <input 
-                type="file" 
-                accept="image/*" 
-                onChange={handleFileChange} 
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
               />
             </label>
-            
+
             <label>
               <strong>Caption:</strong>
               <textarea
@@ -246,10 +267,30 @@ function CreatePost({setIsAuth}) {
                 rows="3"
               />
             </label>
-            
-            <button 
-              type="submit" 
-              className="create-post-button" 
+
+            <label>
+              <strong>Join a Hobby:</strong>
+              <select
+                value={selectedHobbies.length > 0 ? selectedHobbies[0] : ''}
+                onChange={(e) => {
+                  const selectedHobbyId = e.target.value;
+                  if (selectedHobbyId) {
+                    setSelectedHobbies([selectedHobbyId]);
+                  }
+                }}
+              >
+                <option value="">Select a Hobby</option>
+                {hobbies.map((hobby) => (
+                  <option key={hobby.id} value={hobby.id}>
+                    {hobby.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <button
+              type="submit"
+              class="button-24"
               disabled={!media}
             >
               Post
@@ -258,7 +299,7 @@ function CreatePost({setIsAuth}) {
           </form>
         </div>
       </div>
-  
+
       {/* Bottom Navbar */}
       <div className="bottom-navbar">
         <FaHome size={24} onClick={() => handleNavigation('/dashboard')} />
@@ -269,7 +310,7 @@ function CreatePost({setIsAuth}) {
         <FaBell size={24} onClick={() => alert('Notifications')} />
         <FaUser size={24} onClick={() => handleNavigation('/profile')} />
       </div>
-  
+
       {/* Footer */}
       <footer className="footer">
         <p>&copy; 2024 HobbyHive. Connecting hobby enthusiasts worldwide.</p>

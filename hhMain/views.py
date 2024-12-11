@@ -65,10 +65,11 @@ def profile_view(request):
         return Response(serializer.data)
 
     elif request.method == 'PUT':
-        serializer = UserProfileSerializer(
-            profile, data=request.data, partial=True
-        )
+        print("Request data:", request.data)  # Log request data
+        serializer = UserProfileSerializer(profile, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
+        print("Validation errors:", serializer.errors)  # Log validation errors
         return Response(serializer.errors, status=400)
+

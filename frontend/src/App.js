@@ -11,11 +11,11 @@ import PrivacyPolicyPage from './components/PrivacyPolicyPage';
 import Dashboard from './components/Dashboard';
 import AboutPage from './components/AboutPage';
 import Events from './components/Events';
-import Hobbies from './components/Hobbies';
 import Trending from './components/Trending';
 import Groups from './components/Groups';
 import CreateEvent from './components/CreateEvent';
 import ProfilePage from './components/ProfilePage';
+import HobbiesPage from './components/Hobbies';
 
 function App() {
   const [isAuth, setIsAuth] = useState(isAuthenticated());
@@ -54,7 +54,7 @@ function App() {
           } 
         />
         <Route path="/profile" element={<PrivateRoute isAuth={isAuth}><ProfilePage /></PrivateRoute>} />
-        <Route path="/hobbies" element={<PrivateRoute isAuth={isAuth}><Hobbies /></PrivateRoute>} />
+        <Route path="/hobbies" element={<PrivateRoute isAuth={isAuth}><HobbiesPage /></PrivateRoute>} />
         <Route path="/trending" element={<PrivateRoute isAuth={isAuth}><Trending /></PrivateRoute>} />
         <Route path="/groups" element={<PrivateRoute isAuth={isAuth}><Groups /></PrivateRoute>} />
         <Route path="/about" element={<AboutPage />} />

@@ -7,7 +7,8 @@ import {
 import './Dashboard.css';
 import './CreateEvent.css';
 
-const CreateEvent = () => {
+
+const CreateEvent = ({ setIsAuth}) => {
   const [eventData, setEventData] = useState({
     title: '',
     date: '',
@@ -15,16 +16,32 @@ const CreateEvent = () => {
     location: '',
     description: '',
     category: 'social',
-    maxAttendees: ''
+    maxAttendees: '',
   });
-
+  const [imageFile, setImageFile] = useState(null); // For handling image upload
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const formData = new FormData();
+    // Append form data fields
+    Object.keys(eventData).forEach((key) => {
+      formData.append(key, eventData[key]);
+    });
+
+    // Append image file if available
+    if (imageFile) {
+      formData.append('image', imageFile);
+    }
+
     try {
-      await axiosInstance.post('/api/events/create-event/', eventData);
-      navigate('/events');
+      await axiosInstance.post('/api/events/create-event/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      navigate('/events'); // Navigate to events page after successful submission
     } catch (error) {
       console.error('Error creating event:', error);
     }
@@ -32,19 +49,22 @@ const CreateEvent = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEventData(prevState => ({
+    setEventData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
-  
+
+  const handleFileChange = (e) => {
+    setImageFile(e.target.files[0]); // Set the selected file
+  };
+
   const handleNavigation = (path) => {
     navigate(path);
   };
 
   return (
     <div className="create-event-container">
-
       <h1>Create New Event</h1>
       <form onSubmit={handleSubmit} className="event-form">
         <div className="form-group">
@@ -137,6 +157,21 @@ const CreateEvent = () => {
           />
         </div>
 
+        <div className="form-group">
+          <label htmlFor="image">Event Image</label>
+          <input
+            type="file"
+            id="image"
+            accept="image/*"
+            onChange={handleFileChange}
+          />
+          {imageFile && (
+            <p className="file-name">
+              Selected File: <strong>{imageFile.name}</strong>
+            </p>
+          )}
+        </div>
+
         <button type="submit" className="submit-button">
           Create Event
         </button>
@@ -152,7 +187,6 @@ const CreateEvent = () => {
         <FaBell size={24} onClick={() => alert('Notifications')} />
         <FaUser size={24} onClick={() => handleNavigation('/profile')} />
       </div>
-
     </div>
   );
 };

@@ -1,0 +1,99 @@
+/* Container Styles */
+.hobbies-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .hobbies-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  /* Form Styles */
+  .hobby-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .hobby-form input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .hobby-form button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .hobby-form button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Message Styles */
+  .message {
+    text-align: center;
+    color: #28a745;
+    font-weight: bold;
+  }
+  
+  /* Hobby Selector Styles */
+  .hobby-selector {
+    margin-bottom: 20px;
+  }
+  
+  .hobby-selector select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  /* Posts Container */
+  .posts-container {
+    margin-top: 20px;
+  }
+  
+  .posts-container h3 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .post-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .post-card img {
+    width: 100%;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  
+  .post-card p {
+    margin: 5px 0;
+  }
+  
+  .no-posts {
+    text-align: center;
+    color: #666;
+  }
+  

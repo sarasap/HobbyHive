@@ -16,3 +16,5 @@ azure-storage-blob
 python-dotenv
 black
 pytest
+fuzzywuzzy
+nltk

@@ -273,6 +273,62 @@ body, .dashboard-container {
   bottom: 10px;
   left: 10px;
 }
+.comments-section {
+  text-align: left; /* Align all content to the left */
+  padding: 10px; /* Add some padding around the section */
+}
+.post-actions {
+  display: flex; /* Arrange buttons in a row */
+  justify-content: space-between; /* Spread them out */
+ /* Add spacing above the input */
+  
+}
+.comment-input {
+  position: center;
+  gap: 10px; 
+}
+
+.comment-input input {
+  flex: 1; /* Input takes up remaining width */
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 20px;
+}
+
+.comment-input button:active {
+  opacity: .5;
+}
+.comment-input button {
+  background: #FF4742;
+  border: 1px solid #FF4742;
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font-family: nunito, roboto, proxima-nova, "proxima nova", sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 16px;
+  min-height: 40px;
+  outline: 0;
+  padding: 12px 14px;
+  text-align: center;
+  text-rendering: geometricprecision;
+  text-transform: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+}
+
+.comment-input button:hover {
+  background-color: initial;
+  background-position: 0 0;
+  color: #FF4742;
+}
 
 /* Dark mode enhancements */
 .dark .post-card {
@@ -295,6 +351,8 @@ body, .dashboard-container {
 .dark .comment-button:hover {
   background: rgba(0,0,0,0.7);
 }
+
+
 
 
 /* Floating Action Button */

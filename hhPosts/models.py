@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from hhHobbies.models import Hobby
 
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
@@ -7,6 +8,7 @@ class Post(models.Model):
     media = models.ImageField(upload_to='posts_media/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
+    hobbies = models.ManyToManyField(Hobby, related_name='posts', blank=True)
 
     def __str__(self):
         return f'{self.user.username} - {self.caption[:30]}'
@@ -20,16 +22,3 @@ class Comment(models.Model):
     def __str__(self):
         return f'{self.user.username} on {self.post.caption[:20]}'
     
-class Event(models.Model):
-    title = models.CharField(max_length=200)
-    description = models.TextField()
-    date = models.DateTimeField()
-    location = models.CharField(max_length=200)
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_events')
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        ordering = ['-date']
