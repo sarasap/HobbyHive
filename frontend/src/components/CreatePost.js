@@ -152,7 +152,7 @@ function CreatePost({ setIsAuth }) {
         setMessage(response.data.error || 'Failed to create post');
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error:', error.response?.data);
       setMessage('An error occurred while creating the post');
     }
   };
@@ -269,7 +269,7 @@ function CreatePost({ setIsAuth }) {
             </label>
 
             <label>
-              <strong>Join a Hobby:</strong>
+              <strong>Hobby:</strong>
               <select
                 value={selectedHobbies.length > 0 ? selectedHobbies[0] : ''}
                 onChange={(e) => {

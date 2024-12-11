@@ -17,6 +17,9 @@ class PostListCreateView(generics.ListCreateAPIView):
 
     def get_serializer_context(self):
         return {'request': self.request}
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class PostCreateView(generics.CreateAPIView):

@@ -12,7 +12,7 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'text', 'created_at']
 
 class PostSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
+    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
     comments = CommentSerializer(many=True, read_only=True)
     likes_count = serializers.SerializerMethodField()
     media_url = serializers.SerializerMethodField()
