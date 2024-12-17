@@ -37,6 +37,7 @@ const Events = ({ setIsAuth }) => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [guestCount, setGuestCount] = useState(0);
 
   const colorMode = useMemo(
     () => ({
@@ -99,16 +100,16 @@ const Events = ({ setIsAuth }) => {
 
   const handleRSVP = async () => {
     try {
-      const response = await axiosInstance.post(`/api/events/${selectedEvent.id}/rsvp/`);
+      const response = await axiosInstance.post(`/api/events/${selectedEvent.id}/rsvp/`,{ guest_count: guestCount });
       setSnackbarMessage(response.data.detail);
       setSnackbarOpen(true);
       const updatedEvent = { ...selectedEvent };
       if (selectedEvent.is_attending) {
         updatedEvent.is_attending = false;
-        updatedEvent.attendees_count -= 1;
+        updatedEvent.attendees_count -= guestCount + 1; // Deduct guests and user
       } else {
         updatedEvent.is_attending = true;
-        updatedEvent.attendees_count += 1;
+        updatedEvent.attendees_count += guestCount + 1; // Add guests and user
       }
       setSelectedEvent(updatedEvent);
       const updatedEvents = events.map((event) =>
@@ -209,6 +210,12 @@ const Events = ({ setIsAuth }) => {
     <Typography variant="body2" color="textSecondary">
       <strong>Location:</strong> {event.location}
     </Typography>
+    <Typography variant="body2" color="textSecondary">
+            <strong>Remaining RSVPs:</strong>{' '}
+            {event.max_attendees - event.attendees_count > 0
+              ? event.max_attendees - event.attendees_count
+              : 'Full'}
+    </Typography>
     <Typography
       variant="body2"
       sx={{ marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
@@ -264,6 +271,24 @@ const Events = ({ setIsAuth }) => {
                     <strong>Category:</strong> {selectedEvent.category}
                   </Typography>
                   <Typography sx={{ mt: 2 }}>{selectedEvent.description}</Typography>
+                  <Box sx={{ mt: 2 }}>
+                        <Typography variant="body1" sx={{ mb: 1 }}>
+                          Number of Guests:
+                        </Typography>
+                        <InputBase
+                          type="number"
+                          value={guestCount}
+                          onChange={(e) => setGuestCount(Number(e.target.value))}
+                          inputProps={{ min: 0 }}
+                          sx={{
+                            width: '100%',
+                            padding: '8px',
+                            border: '1px solid',
+                            borderColor: 'grey.400',
+                            borderRadius: 1,
+                          }}
+                        />
+                  </Box>
                   <Button
                     variant="contained"
                     color="primary"

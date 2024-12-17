@@ -19,6 +19,7 @@ const CreateEvent = ({ setIsAuth}) => {
     maxAttendees: '',
   });
   const [imageFile, setImageFile] = useState(null); // For handling image upload
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -43,7 +44,13 @@ const CreateEvent = ({ setIsAuth}) => {
       });
       navigate('/events'); // Navigate to events page after successful submission
     } catch (error) {
-      console.error('Error creating event:', error);
+      if (error.response && error.response.data) {
+        console.error('Error creating event:', error.response.data.detail);
+        window.alert(error.response.data.detail);
+      } else {
+        console.error('Unexpected error:', error);
+        window.alert('An unexpected error occurred. Please try again.');
+      }
     }
   };
 
@@ -66,6 +73,8 @@ const CreateEvent = ({ setIsAuth}) => {
   return (
     <div className="create-event-container">
       <h1>Create New Event</h1>
+      {/* Display the error message if exists */}
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
       <form onSubmit={handleSubmit} className="event-form">
         <div className="form-group">
           <label htmlFor="title">Event Title</label>

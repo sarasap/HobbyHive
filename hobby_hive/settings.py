@@ -58,6 +58,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
+     'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler', 
 }
 
 MIDDLEWARE = [
@@ -106,7 +107,7 @@ WSGI_APPLICATION = 'hobby_hive.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'my_db_2',
+        'NAME': 'my_db_4',
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost',
