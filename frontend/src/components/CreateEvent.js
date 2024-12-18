@@ -16,7 +16,7 @@ const CreateEvent = ({ setIsAuth}) => {
     location: '',
     description: '',
     category: 'social',
-    maxAttendees: '',
+    max_attendees: '',
   });
   const [imageFile, setImageFile] = useState(null); // For handling image upload
   const [errorMessage, setErrorMessage] = useState('');
@@ -143,12 +143,12 @@ const CreateEvent = ({ setIsAuth}) => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="maxAttendees">Maximum Attendees</label>
+          <label htmlFor="max_attendees">Maximum Attendees</label>
           <input
             type="number"
-            id="maxAttendees"
-            name="maxAttendees"
-            value={eventData.maxAttendees}
+            id="max_attendees"
+            name="max_attendees"
+            value={eventData.max_attendees}
             onChange={handleChange}
             min="1"
           />
