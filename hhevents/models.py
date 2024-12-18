@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from hhHobbies.models import Hobby
 
 class Event(models.Model):
     CATEGORY_CHOICES = [
@@ -21,7 +22,10 @@ class Event(models.Model):
     max_attendees = models.PositiveIntegerField(null=True, blank=True)
     organizer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='events')
     attendees = models.ManyToManyField(User, related_name='attending_events', blank=True)
-    image = models.ImageField(upload_to='event_images/', null=True, blank=True)  
+    image = models.ImageField(upload_to='event_images/', null=True, blank=True)
+    hobby = models.ForeignKey(
+        Hobby, on_delete=models.SET_NULL, null=True, blank=True, related_name='events'
+    )
 
     def __str__(self):
         return self.title

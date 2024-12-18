@@ -12,6 +12,8 @@ import nltk
 from nltk.stem import WordNetLemmatizer, PorterStemmer
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
+from hhevents.models import Event
+from hhevents.serializers import EventSerializer
 
 
 nltk.download("wordnet")
@@ -110,7 +112,12 @@ class HobbyDetailView(APIView):
         users = User.objects.filter(profile__hobbies=hobby)  # Use the correct field name (profile)
         serialized_users = [{'id': user.id, 'username': user.username} for user in users]
 
+        # Fetch events related to this hobby
+        events = Event.objects.filter(hobby=hobby)
+        serialized_events = EventSerializer(events, many=True, context={'request': request}).data
+
         return Response({
             'posts': serialized_posts,
-            'users': serialized_users,  # Add users to the response
+            'users': serialized_users,
+            'events': serialized_events,  # Add events to the response
         })

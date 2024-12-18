@@ -68,6 +68,3 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-.github/workflows/azure-static-web-apps-thankful-cliff-0f4e0640f.yml
-.github/workflows/ci.yml
-.github/workflows/ranjan_hobbyhive.yml

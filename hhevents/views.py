@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.exceptions import ValidationError
+from hhHobbies.models import Hobby
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -51,10 +52,14 @@ class CreateEventView(generics.CreateAPIView):
     def perform_create(self, serializer):
         event_date = serializer.validated_data['date']
         event_time = serializer.validated_data['time']
-        
+
         event_datetime = datetime.combine(event_date, event_time)
-        
+
         if event_datetime < datetime.now():
             raise ValidationError({'detail': 'Event date and time cannot be in the past.'})
 
-        serializer.save(organizer=self.request.user)
+        # Handle the hobby field
+        hobby_id = self.request.data.get('hobby')  # Get hobby ID from request
+        hobby = Hobby.objects.filter(id=hobby_id).first() if hobby_id else None
+
+        serializer.save(organizer=self.request.user, hobby=hobby)
