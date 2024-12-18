@@ -19,6 +19,7 @@ const CreateEvent = ({ setIsAuth}) => {
     max_attendees: '',
   });
   const [imageFile, setImageFile] = useState(null); // For handling image upload
+  // eslint-disable-next-line no-unused-vars
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
