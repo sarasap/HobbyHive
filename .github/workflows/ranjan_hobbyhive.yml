@@ -1,7 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-# More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
-
 name: Build and deploy Python app to Azure Web App - HobbyHive
 
 on:
@@ -16,25 +12,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Delete Old Artifacts
-        uses: actions/github-script@v6
-        id: artifact
-        with:
-          script: |
-            const res = await github.rest.actions.listArtifactsForRepo({
-              owner: context.repo.owner,
-                repo: context.repo.repo,
-            })
-
-              res.data.artifacts
-                .forEach(({ id }) => {
-                  github.rest.actions.deleteArtifact({
-                      owner: context.repo.owner,
-                      repo: context.repo.repo,
-                      artifact_id: id,
-                  })
-            })
 
       - name: Set up Python version
         uses: actions/setup-python@v5
@@ -51,9 +28,14 @@ jobs:
       
       - name: Collect static files
         run: python manage.py collectstatic --noinput
-        
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
@@ -65,6 +47,7 @@ jobs:
           path: |
             release.zip
             !venv/
+          retention-days: 1 # Retain artifacts for 1 day
 
   deploy:
     runs-on: ubuntu-latest
@@ -84,7 +67,6 @@ jobs:
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
-      
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -98,4 +80,6 @@ jobs:
         with:
           app-name: 'HobbyHive'
           slot-name: 'Production'
-          
+
+      - name: Cleanup temporary files
+        run: rm -rf release.zip
