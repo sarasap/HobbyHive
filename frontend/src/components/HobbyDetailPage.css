@@ -1,36 +1,50 @@
 .hobby-detail-page {
-    padding: 20px;
-  }
-  
-  .posts-section, .users-section {
-    margin-top: 20px;
-  }
-  
-  .post-card, .user-card {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-  }
-  
-  .post-card img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 5px;
-  }
+  padding-top: 10px; /* Reduce top padding */
+}
 
-  .users-section {
-    margin-top: 20px;
-  }
-  
-  .user-card {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-  }
-  
-  .user-card p {
-    margin: 0;
-  }
-  
+h1.display-4 {
+  margin-top: 0; /* Remove top margin */
+  margin-bottom: 10px; /* Reduce bottom margin */
+}
+
+.row.align-items-center {
+  margin-bottom: 20px; /* Reduce spacing between headers and content */
+}
+
+.events-section, .posts-section, .users-section {
+  padding: 10px; /* Add inner padding */
+}
+
+.events-section {
+  margin-left: -30px; /* Slight left adjustment */
+}
+
+.users-section {
+  margin-right: -30px; /* Slight right adjustment */
+}
+
+.card {
+  border-radius: 5px; /* Rounded corners for cards */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.card-img-top {
+  width: 100%;
+  height: auto;
+  border-radius: 5px 5px 0 0; /* Rounded corners for the top image */
+}
+
+.card-title {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.card-text {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+
+.users-heading h2 {
+  padding-left: 10px; /* Add padding to move text slightly to the left */
+}

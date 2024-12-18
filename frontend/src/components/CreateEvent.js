@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axiosInstance from '../utils/axiosConfig';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -7,8 +7,7 @@ import {
 import './Dashboard.css';
 import './CreateEvent.css';
 
-
-const CreateEvent = ({ setIsAuth}) => {
+const CreateEvent = ({ setIsAuth }) => {
   const [eventData, setEventData] = useState({
     title: '',
     date: '',
@@ -17,22 +16,33 @@ const CreateEvent = ({ setIsAuth}) => {
     description: '',
     category: 'social',
     max_attendees: '',
+    hobby: '', // New hobby field
   });
-  const [imageFile, setImageFile] = useState(null); // For handling image upload
-  // eslint-disable-next-line no-unused-vars
+  const [hobbiesList, setHobbiesList] = useState([]); 
+  const [imageFile, setImageFile] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchHobbies = async () => {
+      try {
+        const response = await axiosInstance.get('/api/hobbies/');
+        setHobbiesList(response.data);
+      } catch (error) {
+        console.error('Error fetching hobbies:', error);
+      }
+    };
+    fetchHobbies();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
-    // Append form data fields
     Object.keys(eventData).forEach((key) => {
       formData.append(key, eventData[key]);
     });
 
-    // Append image file if available
     if (imageFile) {
       formData.append('image', imageFile);
     }
@@ -43,7 +53,7 @@ const CreateEvent = ({ setIsAuth}) => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      navigate('/events'); // Navigate to events page after successful submission
+      navigate('/events');
     } catch (error) {
       if (error.response && error.response.data) {
         console.error('Error creating event:', error.response.data.detail);
@@ -64,7 +74,7 @@ const CreateEvent = ({ setIsAuth}) => {
   };
 
   const handleFileChange = (e) => {
-    setImageFile(e.target.files[0]); // Set the selected file
+    setImageFile(e.target.files[0]);
   };
 
   const handleNavigation = (path) => {
@@ -72,11 +82,11 @@ const CreateEvent = ({ setIsAuth}) => {
   };
 
   return (
-    <div className="create-event-container">
-      <h1>Create New Event</h1>
-      {/* Display the error message if exists */}
+    <div className="create-event-container light-coffee-bg">
+      <h1 className="light-coffee-title">Create New Event</h1>
       {errorMessage && <div className="error-message">{errorMessage}</div>}
-      <form onSubmit={handleSubmit} className="event-form">
+
+      <form onSubmit={handleSubmit} className="event-form light-coffee-form">
         <div className="form-group">
           <label htmlFor="title">Event Title</label>
           <input
@@ -144,6 +154,23 @@ const CreateEvent = ({ setIsAuth}) => {
         </div>
 
         <div className="form-group">
+          <label htmlFor="hobby">Hobby (Optional)</label>
+          <select
+            id="hobby"
+            name="hobby"
+            value={eventData.hobby}
+            onChange={handleChange}
+          >
+            <option value="">Select a hobby</option>
+            {hobbiesList.map((hobby) => (
+              <option key={hobby.id} value={hobby.id}>
+                {hobby.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="form-group">
           <label htmlFor="max_attendees">Maximum Attendees</label>
           <input
             type="number"
@@ -182,13 +209,13 @@ const CreateEvent = ({ setIsAuth}) => {
           )}
         </div>
 
-        <button type="submit" className="submit-button">
+        <button type="submit" className="submit-button light-coffee-btn">
           Create Event
         </button>
       </form>
 
       {/* Bottom Navbar */}
-      <div className="bottom-navbar">
+      <div className="bottom-navbar light-coffee-navbar">
         <FaHome size={24} onClick={() => handleNavigation('/dashboard')} />
         <div className="search-bar">
           <FaSearch />

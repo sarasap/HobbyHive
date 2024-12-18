@@ -106,12 +106,12 @@ function Dashboard({ setIsAuth }) {
       console.error('Failed to add comment:', error);
     }
   };
-// eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   const handleComment = (postId) => {
     navigate(`/posts/${postId}/comment`);
   };
 
-// eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   const addNewPost = (post) => {
     setPosts([post, ...posts]); // Prepend the new post to the posts array
   };
@@ -128,11 +128,11 @@ function Dashboard({ setIsAuth }) {
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
-  
+
     if (query.trim() === '') {
       setFilteredPosts(posts);
     } else {
-      const filtered = posts.filter(post => 
+      const filtered = posts.filter(post =>
         (post.caption?.toLowerCase()?.includes(query)) || // Check if caption exists and includes query
         (post.user?.toLowerCase()?.includes(query)) || // Check if user exists and includes query
         (post.comments?.some(comment => comment.text?.toLowerCase()?.includes(query))) // Check if comments array exists and includes query
@@ -140,7 +140,7 @@ function Dashboard({ setIsAuth }) {
       setFilteredPosts(filtered);
     }
   };
-  
+
 
   if (isLoading) {
     return (
@@ -297,10 +297,10 @@ function Dashboard({ setIsAuth }) {
         <FaHome size={24} onClick={() => handleNavigation('/dashboard')} />
         <div className="search-bar">
           <FaSearch />
-          <input 
-            type="text" 
-            placeholder="Search" 
-            value={searchQuery} 
+          <input
+            type="text"
+            placeholder="Search"
+            value={searchQuery}
             onChange={handleSearch}
           />
         </div>

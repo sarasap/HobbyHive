@@ -12,8 +12,8 @@ import {
   Fab,
   Snackbar,
   Grid,
-  ThemeProvider, // Add this
-  createTheme,  // Add this
+  ThemeProvider,
+  createTheme,
 } from '@mui/material';
 import {
   Search as SearchIcon,
@@ -23,11 +23,37 @@ import {
 import axiosInstance from '../utils/axiosConfig';
 import Layout from '../components/Layout';
 
+/* Light Coffee Theme Setup */
+const coffeeTheme = createTheme({
+  palette: {
+    primary: { main: '#4e342e' },   // Espresso-ish
+    secondary: { main: '#d7ccc8' }, // Latte foam
+    background: {
+      default: '#f7f3f1',           // Light latte bg
+      paper: '#ffffff',             // White for cards & modals
+    },
+    text: {
+      primary: '#5d4037',           // Coffee bean brown
+      secondary: '#795548',         // Darker coffee accent
+    },
+  },
+  typography: {
+    fontFamily: 'Merriweather, Georgia, serif',
+    h4: {
+      fontWeight: 700,
+      color: '#5d4037',
+    },
+    body1: {
+      color: '#5d4037',
+    },
+  },
+});
+
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
 const Events = ({ setIsAuth }) => {
   const navigate = useNavigate();
-  const [mode, setMode] = useState('light');
+  const [mode] = useState('light'); // If mode toggling not required, can remove
   const [events, setEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -41,29 +67,19 @@ const Events = ({ setIsAuth }) => {
 
   const colorMode = useMemo(
     () => ({
-      toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
-      },
+      toggleColorMode: () => {},
     }),
-    [],
+    []
   );
 
-  const theme = useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode,
-        },
-      }),
-    [mode],
-  );
+  const theme = coffeeTheme; // Directly use coffeeTheme
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         const response = await axiosInstance.get('/api/events/');
         setEvents(response.data);
-        setFilteredEvents(response.data); // Initialize filtered events
+        setFilteredEvents(response.data);
       } catch (error) {
         console.error('Error fetching events:', error);
         setError('Failed to load events.');
@@ -71,7 +87,6 @@ const Events = ({ setIsAuth }) => {
         setLoading(false);
       }
     };
-
     fetchEvents();
   }, []);
 
@@ -99,21 +114,27 @@ const Events = ({ setIsAuth }) => {
   };
 
   const handleRSVP = async () => {
+    if (!selectedEvent) return;
     try {
-      const response = await axiosInstance.post(`/api/events/${selectedEvent.id}/rsvp/`,{ guest_count: guestCount });
+      const response = await axiosInstance.post(
+        `/api/events/${selectedEvent.id}/rsvp/`,
+        { guest_count: guestCount }
+      );
       setSnackbarMessage(response.data.detail);
       setSnackbarOpen(true);
+
       const updatedEvent = { ...selectedEvent };
-      if (selectedEvent.is_attending) {
+      if (updatedEvent.is_attending) {
         updatedEvent.is_attending = false;
-        updatedEvent.attendees_count -= guestCount + 1; // Deduct guests and user
+        updatedEvent.attendees_count -= guestCount + 1;
       } else {
         updatedEvent.is_attending = true;
-        updatedEvent.attendees_count += guestCount + 1; // Add guests and user
+        updatedEvent.attendees_count += guestCount + 1;
       }
       setSelectedEvent(updatedEvent);
-      const updatedEvents = events.map((event) =>
-        event.id === updatedEvent.id ? updatedEvent : event
+
+      const updatedEvents = events.map((evt) =>
+        evt.id === updatedEvent.id ? updatedEvent : evt
       );
       setEvents(updatedEvents);
     } catch (error) {
@@ -125,15 +146,20 @@ const Events = ({ setIsAuth }) => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
-        <Typography variant="h6">Loading events...</Typography>
+      <Box
+        sx={{
+          display: 'flex', justifyContent: 'center', alignItems: 'center',
+          height: '80vh', backgroundColor: theme.palette.background.default
+        }}
+      >
+        <Typography variant="h6" color="text.primary">Loading events...</Typography>
       </Box>
     );
   }
 
   if (error) {
     return (
-      <Box sx={{ padding: 2 }}>
+      <Box sx={{ padding: 2, backgroundColor: theme.palette.background.default }}>
         <Typography color="error">{error}</Typography>
       </Box>
     );
@@ -141,195 +167,238 @@ const Events = ({ setIsAuth }) => {
 
   return (
     <Layout setIsAuth={setIsAuth}>
-    <ThemeProvider theme={theme}>
-      <ColorModeContext.Provider value={colorMode}>
-        <Box sx={{ flexGrow: 1, backgroundColor: theme.palette.background.default, minHeight: '100vh' }}>
-          {/* App Bar */}
-          {/* Header Section */}
-          <Box sx={{ padding: 3 }}>
-            <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
-              Events Page
-            </Typography>
-            <Typography variant="body1" color="textSecondary">
-              Explore upcoming events tailored for hobbyists!
-            </Typography>
-          </Box>
-
-          {/* Search Bar */}
+      <ThemeProvider theme={theme}>
+        <ColorModeContext.Provider value={colorMode}>
           <Box
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              backgroundColor: '#fff',
-              borderRadius: 2,
-              padding: '8px 16px',
-              boxShadow: 2,
-              margin: '16px',
+              flexGrow: 1,
+              backgroundColor: theme.palette.background.default,
+              minHeight: '100vh',
+              pb: '80px'
             }}
           >
-            <InputBase
-              sx={{ flex: 1, fontSize: '16px' }}
-              placeholder="Search events..."
-              inputProps={{ 'aria-label': 'search events' }}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <IconButton>
-              <SearchIcon />
-            </IconButton>
-          </Box>
-
-          {/* Events List */}
-          <Grid container spacing={3} sx={{ padding: 2 }}>
-  {filteredEvents.length > 0 ? (
-    filteredEvents.map((event) => (
-      <Grid item xs={12} key={event.id}> {/* Adjust this line */}
-        <Card
-  sx={{
-    borderRadius: 3,
-    boxShadow: 2,
-    transition: 'transform 0.2s ease',
-    '&:hover': { transform: 'scale(1.02)' },
-  }}
->
-  {event.image && (
-    <Box
-      component="img"
-      src={event.image}
-      alt={event.title}
-      sx={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: '4px 4px 0 0' }}
-    />
-  )}
-  <CardContent onClick={() => openModal(event)}>
-    <Typography variant="h6" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
-      {event.title}
-    </Typography>
-    <Typography variant="body2" color="textSecondary">
-      <strong>Date:</strong> {event.date}
-    </Typography>
-    <Typography variant="body2" color="textSecondary">
-      <strong>Location:</strong> {event.location}
-    </Typography>
-    <Typography variant="body2" color="textSecondary">
-            <strong>Remaining RSVPs:</strong>{' '}
-            {event.max_attendees - event.attendees_count > 0
-              ? event.max_attendees - event.attendees_count
-              : 'Full'}
-    </Typography>
-    <Typography
-      variant="body2"
-      sx={{ marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-    >
-      {event.description}
-    </Typography>
-  </CardContent>
-</Card>
-      </Grid>
-    ))
-  ) : (
-    <Typography variant="body1" color="textSecondary" sx={{ textAlign: 'center', width: '100%' }}>
-      No events found.
-    </Typography>
-  )}
-</Grid>
-
-          {/* Event Modal */}
-          <Modal
-            open={modalIsOpen}
-            onClose={closeModal}
-            aria-labelledby="event-title"
-            aria-describedby="event-description"
-          >
+            {/* Header Section */}
             <Box
               sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: 400,
-                bgcolor: 'background.paper',
-                borderRadius: 1,
-                boxShadow: 24,
-                p: 4,
+                padding: 3,
+                backgroundColor: theme.palette.secondary.main,
+                borderRadius: '0 0 16px 16px',
               }}
             >
-              {selectedEvent && (
-                <>
-                  <Typography id="event-title" variant="h6" component="h2">
-                    {selectedEvent.title}
-                  </Typography>
-                  <Typography sx={{ mt: 2 }}>
-                    <strong>Date:</strong> {selectedEvent.date}
-                  </Typography>
-                  <Typography>
-                    <strong>Time:</strong> {selectedEvent.time}
-                  </Typography>
-                  <Typography>
-                    <strong>Location:</strong> {selectedEvent.location}
-                  </Typography>
-                  <Typography>
-                    <strong>Category:</strong> {selectedEvent.category}
-                  </Typography>
-                  <Typography sx={{ mt: 2 }}>{selectedEvent.description}</Typography>
-                  <Box sx={{ mt: 2 }}>
-                        <Typography variant="body1" sx={{ mb: 1 }}>
-                          Number of Guests:
-                        </Typography>
-                        <InputBase
-                          type="number"
-                          value={guestCount}
-                          onChange={(e) => setGuestCount(Number(e.target.value))}
-                          inputProps={{ min: 0 }}
+              <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
+                Events Page
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                Explore upcoming events tailored for hobbyists!
+              </Typography>
+            </Box>
+
+            {/* Search Bar */}
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                backgroundColor: '#fff',
+                borderRadius: 2,
+                padding: '8px 16px',
+                boxShadow: 2,
+                margin: '16px',
+                gap: 2,
+              }}
+            >
+              <InputBase
+                sx={{ flex: 1, fontSize: '16px', color: theme.palette.text.primary }}
+                placeholder="Search events..."
+                inputProps={{ 'aria-label': 'search events' }}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <IconButton>
+                <SearchIcon style={{ color: theme.palette.primary.main }} />
+              </IconButton>
+            </Box>
+
+            {/* Events Grid */}
+            <Grid container spacing={3} sx={{ padding: 2 }}>
+              {filteredEvents.length > 0 ? (
+                filteredEvents.map((event) => (
+                  <Grid item xs={12} sm={6} md={4} key={event.id}>
+                    <Card
+                      sx={{
+                        borderRadius: 3,
+                        boxShadow: 4,
+                        transition: 'transform 0.2s ease',
+                        '&:hover': { transform: 'scale(1.02)' },
+                        backgroundColor: theme.palette.background.paper,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {event.image && (
+                        <Box
+                          component="img"
+                          src={event.image}
+                          alt={event.title}
                           sx={{
                             width: '100%',
-                            padding: '8px',
-                            border: '1px solid',
-                            borderColor: 'grey.400',
-                            borderRadius: 1,
+                            height: 200,
+                            objectFit: 'cover',
+                            borderRadius: '4px 4px 0 0'
                           }}
+                          onClick={() => openModal(event)}
                         />
-                  </Box>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleRSVP}
-                    sx={{ mt: 2 }}
-                  >
-                    {selectedEvent.is_attending ? 'Cancel RSVP' : 'RSVP'}
-                  </Button>
-                  <Button onClick={closeModal} sx={{ mt: 2, ml: 2 }}>
-                    Close
-                  </Button>
-                </>
+                      )}
+                      <CardContent onClick={() => openModal(event)}>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
+                          {event.title}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          <strong>Date:</strong> {event.date}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          <strong>Location:</strong> {event.location}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          <strong>Remaining RSVPs:</strong>{' '}
+                          {event.max_attendees - event.attendees_count > 0
+                            ? event.max_attendees - event.attendees_count
+                            : 'Full'}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            marginTop: 1,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap'
+                          }}
+                          color="text.primary"
+                        >
+                          {event.description}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))
+              ) : (
+                <Typography
+                  variant="body1"
+                  color="textSecondary"
+                  sx={{ textAlign: 'center', width: '100%' }}
+                >
+                  No events found.
+                </Typography>
               )}
-            </Box>
-          </Modal>
+            </Grid>
 
-          {/* Floating Action Button */}
-          <Fab
-            color="primary"
-            aria-label="add"
-            sx={{ position: 'fixed', bottom: 16, right: 16 }}
-            onClick={handleCreateEventClick}
-          >
-            <AddIcon />
-          </Fab>
+            {/* Event Modal */}
+            <Modal
+              open={modalIsOpen}
+              onClose={closeModal}
+              aria-labelledby="event-title"
+              aria-describedby="event-description"
+            >
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: 400,
+                  bgcolor: 'background.paper',
+                  borderRadius: 2,
+                  boxShadow: 24,
+                  p: 4,
+                }}
+              >
+                {selectedEvent && (
+                  <>
+                    <Typography id="event-title" variant="h6" component="h2">
+                      {selectedEvent.title}
+                    </Typography>
+                    <Typography sx={{ mt: 2 }}>
+                      <strong>Date:</strong> {selectedEvent.date}
+                    </Typography>
+                    <Typography>
+                      <strong>Time:</strong> {selectedEvent.time}
+                    </Typography>
+                    <Typography>
+                      <strong>Location:</strong> {selectedEvent.location}
+                    </Typography>
+                    <Typography>
+                      <strong>Category:</strong> {selectedEvent.category}
+                    </Typography>
+                    {selectedEvent.hobby && (
+                      <Typography>
+                        <strong>Hobby:</strong> {selectedEvent.hobby.name}
+                      </Typography>
+                    )}
+                    <Typography sx={{ mt: 2 }}>{selectedEvent.description}</Typography>
+                    <Box sx={{ mt: 2 }}>
+                      <Typography variant="body1" sx={{ mb: 1 }}>
+                        Number of Guests:
+                      </Typography>
+                      <InputBase
+                        type="number"
+                        value={guestCount}
+                        onChange={(e) => setGuestCount(Number(e.target.value))}
+                        inputProps={{ min: 0 }}
+                        sx={{
+                          width: '100%',
+                          padding: '8px',
+                          border: '1px solid',
+                          borderColor: 'grey.400',
+                          borderRadius: 1,
+                          backgroundColor: '#fff',
+                          color: theme.palette.text.primary,
+                        }}
+                      />
+                    </Box>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleRSVP}
+                      sx={{ mt: 2 }}
+                    >
+                      {selectedEvent.is_attending ? 'Cancel RSVP' : 'RSVP'}
+                    </Button>
+                    <Button onClick={closeModal} sx={{ mt: 2, ml: 2 }}>
+                      Close
+                    </Button>
+                  </>
+                )}
+              </Box>
+            </Modal>
 
-          {/* Snackbar for Feedback */}
-          <Snackbar
-            open={snackbarOpen}
-            autoHideDuration={6000}
-            onClose={() => setSnackbarOpen(false)}
-            message={snackbarMessage}
-            action={
-              <IconButton size="small" aria-label="close" color="inherit" onClick={() => setSnackbarOpen(false)}>
-                <CloseIcon fontSize="small" />
-              </IconButton>
-            }
-          />
-        </Box>
-      </ColorModeContext.Provider>
-    </ThemeProvider>
+            {/* Floating Action Button */}
+            <Fab
+              color="primary"
+              aria-label="add"
+              sx={{ position: 'fixed', bottom: 16, right: 16 }}
+              onClick={handleCreateEventClick}
+            >
+              <AddIcon />
+            </Fab>
+
+            {/* Snackbar for Feedback */}
+            <Snackbar
+              open={snackbarOpen}
+              autoHideDuration={6000}
+              onClose={() => setSnackbarOpen(false)}
+              message={snackbarMessage}
+              action={
+                <IconButton
+                  size="small"
+                  aria-label="close"
+                  color="inherit"
+                  onClick={() => setSnackbarOpen(false)}
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              }
+            />
+          </Box>
+        </ColorModeContext.Provider>
+      </ThemeProvider>
     </Layout>
   );
 };
