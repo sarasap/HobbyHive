@@ -16,6 +16,7 @@ import Groups from './components/Groups';
 import CreateEvent from './components/CreateEvent';
 import ProfilePage from './components/ProfilePage';
 import HobbiesPage from './components/Hobbies';
+import HobbyDetailPage from './components/HobbyDetailPage';
 
 function App() {
   const [isAuth, setIsAuth] = useState(isAuthenticated());
@@ -46,17 +47,25 @@ function App() {
             </PrivateRoute>
           }
         />
-        <Route path="/events" 
-          element={ 
-          <PrivateRoute isAuth={isAuth}>
-            <Events />
-          </PrivateRoute>
-          } 
+        <Route path="/events"
+          element={
+            <PrivateRoute isAuth={isAuth}>
+              <Events />
+            </PrivateRoute>
+          }
         />
         <Route path="/profile" element={<PrivateRoute isAuth={isAuth}><ProfilePage /></PrivateRoute>} />
         <Route path="/hobbies" element={<PrivateRoute isAuth={isAuth}><HobbiesPage /></PrivateRoute>} />
         <Route path="/trending" element={<PrivateRoute isAuth={isAuth}><Trending /></PrivateRoute>} />
         <Route path="/groups" element={<PrivateRoute isAuth={isAuth}><Groups /></PrivateRoute>} />
+        <Route
+          path="/hobbies/:hobbyName"
+          element={
+            <PrivateRoute isAuth={isAuth}>
+              <HobbyDetailPage />
+            </PrivateRoute>
+          }
+        />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/privacy" element={<PrivacyPolicyPage />} />

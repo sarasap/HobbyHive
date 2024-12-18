@@ -1,0 +1,36 @@
+.hobby-detail-page {
+    padding: 20px;
+  }
+  
+  .posts-section, .users-section {
+    margin-top: 20px;
+  }
+  
+  .post-card, .user-card {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+  
+  .post-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+  }
+
+  .users-section {
+    margin-top: 20px;
+  }
+  
+  .user-card {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+  
+  .user-card p {
+    margin: 0;
+  }
+  

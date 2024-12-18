@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import axiosInstance from '../utils/axiosConfig';
 import Layout from '../components/Layout';
 import './Hobbies.css'; // Import the CSS file
+import { useNavigate } from 'react-router-dom';
 
 function HobbiesPage({ setIsAuth }) {
   const [hobbies, setHobbies] = useState([]);
   const [newHobby, setNewHobby] = useState('');
   const [message, setMessage] = useState('');
-  const [selectedHobby, setSelectedHobby] = useState(null);
-  const [posts, setPosts] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchHobbies = async () => {
@@ -30,26 +30,17 @@ function HobbiesPage({ setIsAuth }) {
     }
     try {
       const response = await axiosInstance.post('/api/hobbies/', { name: newHobby });
-      setHobbies([...hobbies, response.data]);
-      setNewHobby('');
-      setMessage('Hobby added successfully');
+      const hobbyName = response.data.name.toLowerCase().replace(' ', '-');
+      navigate(`/hobbies/${hobbyName}/`); // Redirect to the new hobby page
     } catch (error) {
       setMessage(error.response?.data?.error || 'Failed to add hobby');
     }
   };
 
-  const handleHobbySelect = async (e) => {
-    const hobbyId = e.target.value;
-    setSelectedHobby(hobbyId);
-    if (hobbyId) {
-      try {
-        const response = await axiosInstance.get(`/api/hobbies/${hobbyId}/posts/`);
-        setPosts(response.data);
-      } catch (error) {
-        console.error('Error fetching posts:', error);
-      }
-    } else {
-      setPosts([]);
+  const handleHobbySelect = (hobbyName) => {
+    if (hobbyName) {
+      const hobbySlug = hobbyName.toLowerCase().replace(' ', '-');
+      navigate(`/hobbies/${hobbySlug}/`); // Redirect to the selected hobby's page
     }
   };
 
@@ -72,37 +63,18 @@ function HobbiesPage({ setIsAuth }) {
         {message && <p className="message">{message}</p>}
 
         <div className="hobby-selector">
-          <h3>Select a Hobby to View Posts</h3>
-          <select onChange={handleHobbySelect} defaultValue="">
+          <h3>Select a Hobby</h3>
+          <select onChange={(e) => handleHobbySelect(e.target.value)} defaultValue="">
             <option value="" disabled>
               Select a hobby
             </option>
             {hobbies.map((hobby) => (
-              <option key={hobby.id} value={hobby.id}>
+              <option key={hobby.id} value={hobby.name}>
                 {hobby.name}
               </option>
             ))}
           </select>
         </div>
-
-        {selectedHobby && (
-          <div className="posts-container">
-            <h3>Posts for Selected Hobby</h3>
-            {posts.length > 0 ? (
-              posts.map((post) => (
-                <div key={post.id} className="post-card">
-                  {post.media_url && <img src={post.media_url} alt="Post" />}
-                  <p>{post.caption}</p>
-                  <p>
-                    <strong>By:</strong> {post.user}
-                  </p>
-                </div>
-              ))
-            ) : (
-              <p className="no-posts">No posts available for this hobby.</p>
-            )}
-          </div>
-        )}
       </div>
     </Layout>
   );

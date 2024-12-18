@@ -10,6 +10,9 @@ from django.conf import settings
 from fuzzywuzzy import fuzz
 import nltk
 from nltk.stem import WordNetLemmatizer, PorterStemmer
+from django.contrib.auth.models import User
+from rest_framework.views import APIView
+
 
 nltk.download("wordnet")
 
@@ -20,7 +23,7 @@ class HobbyListCreateView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         """
-        Create a new hobby with enhanced duplicate checking using fuzzywuzzy, lemmatization, and stemming.
+        Create a new hobby and return the hobby's detail URL.
         """
         name = request.data.get('name', '').strip()
         if not name:
@@ -40,42 +43,74 @@ class HobbyListCreateView(generics.ListCreateAPIView):
 
         # If no duplicate, create the hobby
         hobby = Hobby.objects.create(name=name)
-        return Response(HobbySerializer(hobby).data, status=status.HTTP_201_CREATED)
+        return Response(
+            {
+                'id': hobby.id,
+                'name': hobby.name,
+                'url': f'/{hobby.name.lower().replace(" ", "-")}/'  # Generate hobby URL
+            },
+            status=status.HTTP_201_CREATED
+        )
 
     @staticmethod
     def are_hobbies_similar(hobby1, hobby2):
-        """
-        Use fuzzy matching to determine if two hobbies are similar.
-        """
         similarity_score = fuzz.token_sort_ratio(hobby1, hobby2)
-        print(f"Comparing '{hobby1}' and '{hobby2}' - Similarity Score: {similarity_score}")
-        return similarity_score > 85  # Adjust threshold as needed
+        return similarity_score > 85
 
     @staticmethod
     def normalize_name(name):
-        """
-        Normalize a hobby name by applying lemmatization, stemming, and lowercasing.
-        """
         lemmatizer = WordNetLemmatizer()
         stemmer = PorterStemmer()
-
-        # Lowercase the name and split into words
         words = name.lower().split()
-
-        # Apply lemmatization followed by stemming
         normalized_words = [stemmer.stem(lemmatizer.lemmatize(word)) for word in words]
-
-        # Join back into a single string
         return " ".join(normalized_words)
 
 
-class PostsByHobbyView(ListAPIView):
-    serializer_class = PostSerializer
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from .models import Hobby
+from hhPosts.models import Post
+from hhPosts.serializers import PostSerializer
+
+
+class PostsByHobbyView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        hobby_id = self.kwargs['hobby_id']
-        hobby = Hobby.objects.filter(id=hobby_id).first()
+    def get(self, request, hobby_name):
+        # Fetch the hobby by name
+        hobby = Hobby.objects.filter(name__iexact=hobby_name).first()
         if not hobby:
-            return Post.objects.none()  # Return empty queryset if hobby does not exist
-        return Post.objects.filter(hobbies=hobby)
+            return Response({'error': 'Hobby not found'}, status=404)
+
+        # Fetch posts related to this hobby
+        posts = Post.objects.filter(hobbies=hobby)
+        serialized_posts = PostSerializer(posts, many=True, context={'request': request}).data
+
+        return Response(serialized_posts)
+
+
+from django.contrib.auth.models import User
+
+class HobbyDetailView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, hobby_name):
+        # Fetch the hobby by name
+        hobby = Hobby.objects.filter(name__iexact=hobby_name).first()
+        if not hobby:
+            return Response({'error': 'Hobby not found'}, status=404)
+
+        # Fetch posts related to this hobby
+        posts = Post.objects.filter(hobbies=hobby)
+        serialized_posts = PostSerializer(posts, many=True, context={'request': request}).data
+
+        # Fetch users who have joined this hobby via the UserProfile model
+        users = User.objects.filter(profile__hobbies=hobby)  # Use the correct field name (profile)
+        serialized_users = [{'id': user.id, 'username': user.username} for user in users]
+
+        return Response({
+            'posts': serialized_posts,
+            'users': serialized_users,  # Add users to the response
+        })

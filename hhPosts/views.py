@@ -13,7 +13,7 @@ class PostListCreateView(generics.ListCreateAPIView):
         # Get the user's profile and hobbies
         profile = UserProfile.objects.get(user=self.request.user)
         joined_hobbies = profile.hobbies.all()
-        return Post.objects.filter(hobbies__in=joined_hobbies).distinct()
+        return Post.objects.filter(hobbies__in=joined_hobbies).distinct().order_by('-created_at')
 
     def get_serializer_context(self):
         return {'request': self.request}
