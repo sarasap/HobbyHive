@@ -128,18 +128,19 @@ function Dashboard({ setIsAuth }) {
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
-
+  
     if (query.trim() === '') {
       setFilteredPosts(posts);
     } else {
-      const filtered = posts.filter(post =>
-        post.caption.toLowerCase().includes(query) ||
-        post.user.toLowerCase().includes(query) ||
-        post.comment.toLowerCase.includes(query)
+      const filtered = posts.filter(post => 
+        (post.caption?.toLowerCase()?.includes(query)) || // Check if caption exists and includes query
+        (post.user?.toLowerCase()?.includes(query)) || // Check if user exists and includes query
+        (post.comments?.some(comment => comment.text?.toLowerCase()?.includes(query))) // Check if comments array exists and includes query
       );
-      setFilteredPosts(filtered)
+      setFilteredPosts(filtered);
     }
   };
+  
 
   if (isLoading) {
     return (
