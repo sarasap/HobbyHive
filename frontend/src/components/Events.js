@@ -53,6 +53,7 @@ const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
 const Events = ({ setIsAuth }) => {
   const navigate = useNavigate();
+  // eslint-disable-next-line no-unused-vars
   const [mode] = useState('light');
   const [events, setEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);

@@ -20,6 +20,7 @@ const CreateEvent = ({ setIsAuth }) => {
   });
   const [hobbiesList, setHobbiesList] = useState([]); 
   const [imageFile, setImageFile] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
