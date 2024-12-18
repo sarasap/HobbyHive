@@ -17,6 +17,8 @@ function Dashboard({ setIsAuth }) {
   const [showComments, setShowComments] = useState({});
   const [newComment, setNewComment] = useState({});
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredPosts, setFilteredPosts] = useState([]);
 
   // Toggle between light and dark mode
   const toggleDarkMode = () => {
@@ -64,6 +66,7 @@ function Dashboard({ setIsAuth }) {
     try {
       const response = await axiosInstance.get('/api/posts/');
       setPosts(response.data); // Update posts state with fetched data
+      setFilteredPosts(response.data)
     } catch (error) {
       console.error('Failed to fetch posts:', error);
     }
@@ -120,6 +123,22 @@ function Dashboard({ setIsAuth }) {
 
   const handleCreatePostClick = () => {
     navigate('/create-post');
+  };
+
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+
+    if (query.trim() === '') {
+      setFilteredPosts(posts);
+    } else {
+      const filtered = posts.filter(post =>
+        post.caption.toLowerCase().includes(query) ||
+        post.user.toLowerCase().includes(query) ||
+        post.comment.toLowerCase.includes(query)
+      );
+      setFilteredPosts(filtered)
+    }
   };
 
   if (isLoading) {
@@ -210,8 +229,8 @@ function Dashboard({ setIsAuth }) {
           {/* Posts Section */}
           <div className="posts-section">
             <h2>Posts</h2>
-            {posts.length > 0 ? (
-              posts.map((post) => (
+            {filteredPosts.length > 0 ? (
+              filteredPosts.map((post) => (
                 <div key={post.id} className="post-card">
                   <div className="post-header">
                     <strong>{post.user}</strong>
@@ -277,7 +296,12 @@ function Dashboard({ setIsAuth }) {
         <FaHome size={24} onClick={() => handleNavigation('/dashboard')} />
         <div className="search-bar">
           <FaSearch />
-          <input type="text" placeholder="Search" />
+          <input 
+            type="text" 
+            placeholder="Search" 
+            value={searchQuery} 
+            onChange={handleSearch}
+          />
         </div>
         <FaBell size={24} onClick={() => alert('Notifications')} />
         <FaUser size={24} onClick={() => handleNavigation('/profile')} />
