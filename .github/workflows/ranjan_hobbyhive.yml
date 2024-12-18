@@ -7,7 +7,7 @@ name: Build and deploy Python app to Azure Web App - HobbyHive
 on:
   push:
     branches:
-      - ranjan
+      - main
   workflow_dispatch:
 
 jobs:
