@@ -26,15 +26,15 @@ import Layout from '../components/Layout';
 /* Light Coffee Theme Setup */
 const coffeeTheme = createTheme({
   palette: {
-    primary: { main: '#4e342e' },   // Espresso-ish
-    secondary: { main: '#d7ccc8' }, // Latte foam
+    primary: { main: '#4e342e' },
+    secondary: { main: '#d7ccc8' },
     background: {
-      default: '#f7f3f1',           // Light latte bg
-      paper: '#ffffff',             // White for cards & modals
+      default: '#f7f3f1',
+      paper: '#ffffff',
     },
     text: {
-      primary: '#5d4037',           // Coffee bean brown
-      secondary: '#795548',         // Darker coffee accent
+      primary: '#5d4037',
+      secondary: '#795548',
     },
   },
   typography: {
@@ -53,10 +53,14 @@ const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
 const Events = ({ setIsAuth }) => {
   const navigate = useNavigate();
-  const [mode] = useState('light'); // If mode toggling not required, can remove
+  const [mode] = useState('light');
   const [events, setEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedHobby, setSelectedHobby] = useState(''); // For hobby filter
+  const [hobbiesList, setHobbiesList] = useState([]); // Store fetched hobbies
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -65,15 +69,10 @@ const Events = ({ setIsAuth }) => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [guestCount, setGuestCount] = useState(0);
 
-  const colorMode = useMemo(
-    () => ({
-      toggleColorMode: () => {},
-    }),
-    []
-  );
+  const colorMode = useMemo(() => ({ toggleColorMode: () => {} }), []);
+  const theme = coffeeTheme;
 
-  const theme = coffeeTheme; // Directly use coffeeTheme
-
+  // Fetch Events
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -90,14 +89,37 @@ const Events = ({ setIsAuth }) => {
     fetchEvents();
   }, []);
 
+  // Fetch Hobbies
   useEffect(() => {
-    const filtered = events.filter((event) =>
+    const fetchHobbies = async () => {
+      try {
+        const response = await axiosInstance.get('/api/hobbies/');
+        setHobbiesList(response.data);
+      } catch (error) {
+        console.error('Error fetching hobbies:', error);
+      }
+    };
+    fetchHobbies();
+  }, []);
+
+  // Filter logic
+  useEffect(() => {
+    let filtered = events.filter((event) =>
       event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       event.location.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    if (selectedDate) {
+      filtered = filtered.filter((event) => event.date === selectedDate);
+    }
+
+    if (selectedHobby) {
+      filtered = filtered.filter((event) => event.hobby && event.hobby.id === parseInt(selectedHobby, 10));
+    }
+
     setFilteredEvents(filtered);
-  }, [searchQuery, events]);
+  }, [searchQuery, selectedDate, selectedHobby, events]);
 
   const handleCreateEventClick = () => {
     navigate('/create-event');
@@ -193,7 +215,7 @@ const Events = ({ setIsAuth }) => {
               </Typography>
             </Box>
 
-            {/* Search Bar */}
+            {/* Search & Filters */}
             <Box
               sx={{
                 display: 'flex',
@@ -204,18 +226,66 @@ const Events = ({ setIsAuth }) => {
                 boxShadow: 2,
                 margin: '16px',
                 gap: 2,
+                flexWrap: 'wrap',
               }}
             >
-              <InputBase
-                sx={{ flex: 1, fontSize: '16px', color: theme.palette.text.primary }}
-                placeholder="Search events..."
-                inputProps={{ 'aria-label': 'search events' }}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <IconButton>
-                <SearchIcon style={{ color: theme.palette.primary.main }} />
-              </IconButton>
+              {/* Search */}
+              <Box sx={{ display: 'flex', alignItems: 'center', flex: 1, gap: 2 }}>
+                <InputBase
+                  sx={{ flex: 1, fontSize: '16px', color: theme.palette.text.primary }}
+                  placeholder="Search events..."
+                  inputProps={{ 'aria-label': 'search events' }}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <IconButton>
+                  <SearchIcon style={{ color: theme.palette.primary.main }} />
+                </IconButton>
+              </Box>
+
+              {/* Date Filter */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="body2">Date:</Typography>
+                <input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  style={{
+                    border: '1px solid #d6ccc9',
+                    borderRadius: '4px',
+                    padding: '4px',
+                    height: '36px',
+                    color: theme.palette.text.primary,
+                    backgroundColor: '#fff',
+                    fontFamily: 'Merriweather, Georgia, serif',
+                  }}
+                />
+              </Box>
+
+              {/* Hobby Filter */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="body2">Hobby:</Typography>
+                <select
+                  value={selectedHobby}
+                  onChange={(e) => setSelectedHobby(e.target.value)}
+                  style={{
+                    border: '1px solid #d6ccc9',
+                    borderRadius: '4px',
+                    padding: '4px',
+                    height: '36px',
+                    color: theme.palette.text.primary,
+                    backgroundColor: '#fff',
+                    fontFamily: 'Merriweather, Georgia, serif',
+                  }}
+                >
+                  <option value="">All Hobbies</option>
+                  {hobbiesList.map((hobby) => (
+                    <option key={hobby.id} value={hobby.id}>
+                      {hobby.name}
+                    </option>
+                  ))}
+                </select>
+              </Box>
             </Box>
 
             {/* Events Grid */}
@@ -263,6 +333,11 @@ const Events = ({ setIsAuth }) => {
                             ? event.max_attendees - event.attendees_count
                             : 'Full'}
                         </Typography>
+                        {event.hobby && (
+                          <Typography variant="body2" color="text.secondary">
+                            <strong>Hobby:</strong> {event.hobby.name}
+                          </Typography>
+                        )}
                         <Typography
                           variant="body2"
                           sx={{
